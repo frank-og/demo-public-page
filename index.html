@@ -1,0 +1,1284 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>ShotDepth Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..600&display=swap">
+<style>
+/* Layout: light editorial magazine. White paper, large photography, serif headlines, court-blue accent from the logo, ball-yellow used only as a marker. Single light theme by choice. */
+:root{
+  color-scheme:light;
+  --paper:#FFFFFF; --wash:#F3F5F8; --ink:#101317; --ink2:#2E333B; --muted:#69717E; --line:#E3E6EB;
+  --accent:#1F45B5; --accent2:#163690; --felt:#D7EA3C; --on-dark:#FFFFFF;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --sans:"Archivo",system-ui,"Segoe UI",Helvetica,Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --gut:clamp(16px,4vw,48px); --maxw:1240px;
+}
+*{box-sizing:border-box}
+html{background:var(--paper)}
+body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:18px;line-height:1.6;padding-inline:0;padding-block:0;-webkit-font-smoothing:antialiased}
+.wrap{max-width:calc(var(--maxw) + 2*var(--gut));margin-inline:auto;padding-inline:var(--gut)}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+h1,h2,h3{font-family:var(--serif);font-weight:500;text-wrap:balance;margin:0;letter-spacing:-.01em}
+button,input,select,textarea{font:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+.kicker{font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.kicker.dot::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--felt);box-shadow:0 0 0 1px var(--ink) inset;margin-right:8px;vertical-align:1px}
+.meta{display:flex;gap:14px;flex-wrap:wrap;font-family:var(--sans);font-size:13px;color:var(--muted)}
+.meta span+span::before{content:"·";margin-right:14px;color:var(--line)}
+.ph{position:relative;overflow:hidden;background:var(--wash)}
+.ph img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+a:hover .ph img{transform:scale(1.035)}
+.credit{font-family:var(--sans);font-size:11.5px;color:var(--muted);margin-top:8px}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:rgba(255,255,255,.94);backdrop-filter:saturate(1.4) blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:20px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto}
+.brand svg{width:36px;height:24px;flex:none}
+.brand b{font-family:var(--sans);font-weight:900;font-stretch:125%;font-size:19px;letter-spacing:-.01em}
+.nav{display:flex;gap:26px;align-items:center;font-family:var(--sans);font-size:14.5px;font-weight:600}
+.nav a{position:relative;padding-block:6px;color:var(--ink2)}
+.nav a[aria-current="page"],.nav a:hover{color:var(--ink)}
+.nav a[aria-current="page"]::after{content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;background:var(--accent)}
+.badge{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;margin-left:6px;border-radius:10px;background:var(--felt);color:var(--ink);font-family:var(--mono);font-size:11.5px;font-weight:500;vertical-align:1px}
+.lang{display:flex;gap:2px;font-family:var(--sans);font-size:12.5px;font-weight:700}
+.lang button{border:0;background:none;color:var(--muted);padding:6px 8px;cursor:pointer;border-radius:6px}
+.lang button[aria-pressed="true"]{color:var(--ink);background:var(--wash)}
+.secbar{border-bottom:1px solid var(--line)}
+.secbar .wrap{overflow-x:auto;scrollbar-width:none}
+.secbar .wrap::-webkit-scrollbar{display:none}
+.secs{display:flex;gap:26px;width:max-content;font-family:var(--sans);font-size:13.5px;font-weight:500;color:var(--muted);height:46px;align-items:center}
+.secs a:hover,.secs a[aria-current="page"]{color:var(--ink)}
+.secs a[aria-current="page"]{font-weight:700}
+
+/* masthead line */
+.dateline{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:22px 0;font-family:var(--sans);font-size:12.5px;color:var(--muted);letter-spacing:.02em}
+
+/* cover */
+.cover{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(28px,4vw,64px);align-items:center;padding-block:28px 64px}
+.cover h1{font-size:clamp(38px,5.2vw,72px);line-height:1.02;font-weight:500;letter-spacing:-.025em;margin-block:16px 20px}
+.cover .dek{font-size:clamp(19px,1.6vw,22px);font-style:italic;color:var(--ink2);line-height:1.45;margin:0 0 22px;max-width:34ch}
+.cover .ph{aspect-ratio:4/3;border-radius:2px}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--sans);font-weight:700;font-size:14.5px;padding:13px 22px;border-radius:999px;border:1.5px solid var(--ink);background:var(--ink);color:var(--on-dark);cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+.btn:hover{background:var(--accent);border-color:var(--accent)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--on-dark);border-color:var(--ink)}
+.btn.blue{background:var(--accent);border-color:var(--accent)}
+.btn.blue:hover{background:var(--accent2);border-color:var(--accent2)}
+.btn.light{background:var(--paper);border-color:var(--paper);color:var(--ink)}
+.btn.light:hover{background:var(--felt);border-color:var(--felt)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* section heads */
+.shead{display:flex;justify-content:space-between;align-items:end;gap:16px;flex-wrap:wrap;border-top:2px solid var(--ink);padding-top:14px;margin-bottom:28px}
+.shead h2{font-size:clamp(26px,2.6vw,34px);font-weight:500}
+.shead a{font-family:var(--sans);font-size:13.5px;font-weight:700;color:var(--accent)}
+
+/* story grid */
+.latest{padding-block:8px 72px}
+.lead-row{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:40px;padding-bottom:40px;border-bottom:1px solid var(--line);margin-bottom:40px}
+.story{display:grid;align-content:start;gap:10px}
+.story .ph{aspect-ratio:3/2}
+.story h3{font-size:22px;line-height:1.18;font-weight:600}
+.story:hover h3{color:var(--accent)}
+.story p{margin:0;color:var(--ink2);font-size:16.5px;line-height:1.5}
+.story.lead .ph{aspect-ratio:16/10}
+.story.lead h3{font-size:clamp(28px,2.8vw,38px);font-weight:500;line-height:1.08;letter-spacing:-.02em}
+.story.lead p{font-size:19px;font-style:italic}
+.stack{display:grid;gap:32px;align-content:start}
+.stack .story .ph{aspect-ratio:16/10}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:44px 36px}
+
+/* lab band */
+.band{background:var(--wash);padding-block:72px}
+.lab{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:clamp(28px,4vw,64px);align-items:center}
+.lab h2{font-size:clamp(30px,3.4vw,46px);line-height:1.05;letter-spacing:-.02em;margin-block:14px 16px}
+.lab p{color:var(--ink2);margin:0 0 18px;max-width:42ch}
+.labcard{background:var(--paper);border-radius:6px;padding:clamp(16px,2.4vw,28px);box-shadow:0 1px 0 var(--line),0 20px 40px -24px rgba(16,19,23,.25);min-width:0}
+.labcard svg{width:100%;height:auto;display:block}
+.controls{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin-top:16px}
+.controls label{display:grid;gap:6px;font-family:var(--sans);font-size:12.5px;font-weight:600;color:var(--muted)}
+.controls label span.v{color:var(--ink);font-family:var(--mono);font-weight:500}
+.controls input[type=range]{width:100%;accent-color:var(--accent)}
+.readout{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.readout div{display:grid;gap:2px;border-top:1px solid var(--line);padding-top:10px}
+.readout b{font-family:var(--mono);font-size:clamp(20px,2.2vw,28px);font-weight:500;font-variant-numeric:tabular-nums}
+.readout span{font-family:var(--sans);font-size:11.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.note{font-family:var(--sans);font-size:12.5px;color:var(--muted)}
+.note.err{color:#B3261E}
+
+/* figures band */
+.figs{padding-block:72px}
+.figrow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:0}
+.figrow a{display:grid;gap:10px;align-content:start;padding:4px 22px 4px 0;margin-right:22px;border-right:1px solid var(--line)}
+.figrow a:last-child{border-right:0;margin-right:0}
+.figrow b{font-family:var(--mono);font-weight:400;font-size:clamp(26px,2.6vw,36px);line-height:1.05;letter-spacing:-.02em;color:var(--ink);overflow-wrap:anywhere}
+.figrow span{font-size:15px;line-height:1.4;color:var(--ink2)}
+.figrow a:hover b{color:var(--accent)}
+
+/* forum band */
+.fband{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:0;background:var(--ink);color:var(--on-dark);border-radius:4px;overflow:hidden;margin-bottom:80px}
+.fband .ph{min-height:420px;background:var(--ink)}
+.fband .ph img{position:absolute;inset:0;opacity:.9}
+.fband .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,19,23,0) 30%,rgba(16,19,23,.85) 100%)}
+.fband .over{position:absolute;left:0;right:0;bottom:0;padding:32px;z-index:1}
+.fband .over h2{font-size:clamp(34px,4vw,56px);line-height:1;letter-spacing:-.02em;color:var(--on-dark)}
+.fband .over p{margin:10px 0 0;color:rgba(255,255,255,.82);max-width:40ch;font-size:17px}
+.fband .kicker{color:var(--felt)}
+.flist{padding:28px 32px;display:grid;align-content:start;gap:0}
+.flist .row{display:grid;gap:4px;padding-block:16px;border-bottom:1px solid rgba(255,255,255,.14)}
+.flist .row b{font-family:var(--serif);font-weight:500;font-size:19px;line-height:1.25}
+.flist .row:hover b{color:var(--felt)}
+.flist .row small{font-family:var(--sans);font-size:12px;color:rgba(255,255,255,.62)}
+.flist .empty-d{color:rgba(255,255,255,.75);font-size:16px;padding-block:16px}
+
+/* article */
+.ahead{max-width:860px;margin-inline:auto;text-align:center;padding-block:56px 36px}
+.ahead h1{font-size:clamp(36px,5.4vw,68px);line-height:1.03;letter-spacing:-.025em;margin-block:18px 20px}
+.ahead .dek{font-size:clamp(19px,2vw,24px);font-style:italic;color:var(--ink2);line-height:1.45;margin:0 auto 22px;max-width:40ch}
+.ahead .meta{justify-content:center}
+.ahero .ph{aspect-ratio:21/10;max-height:640px}
+.abody{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,680px) minmax(0,1fr);gap:40px;padding-block:48px 24px}
+.prose{grid-column:2;font-size:19.5px;line-height:1.68;color:var(--ink2)}
+.prose p{margin:0 0 1.15em}
+.prose h3{font-size:27px;font-weight:600;color:var(--ink);margin:1.7em 0 .5em;line-height:1.2}
+.prose>p:first-child::first-letter{float:left;font-size:4.4em;line-height:.82;font-weight:500;padding:8px 10px 0 0;color:var(--ink)}
+.aside{grid-column:3;align-self:start;position:sticky;top:130px;display:grid;gap:10px;max-width:240px;padding-top:6px;border-top:2px solid var(--ink)}
+.aside b{font-family:var(--mono);font-weight:400;font-size:34px;line-height:1.05;letter-spacing:-.02em;overflow-wrap:anywhere}
+.aside span{font-size:15px;line-height:1.45;color:var(--ink2)}
+.debate{grid-column:2;margin-top:28px;border:1px solid var(--line);border-radius:6px;padding:clamp(22px,3vw,36px);display:grid;gap:16px;background:linear-gradient(180deg,var(--wash),var(--paper))}
+.debate q{font-family:var(--serif);font-size:clamp(24px,2.6vw,32px);font-style:italic;font-weight:500;line-height:1.25;color:var(--ink);quotes:"“" "”"}
+.debate .btn{justify-self:start}
+.sources{grid-column:2;margin-top:40px;padding-top:18px;border-top:1px solid var(--line)}
+.sources ol{margin:12px 0 0;padding-left:20px;display:grid;gap:8px;font-family:var(--sans);font-size:13.5px;line-height:1.5;color:var(--muted)}
+.more{padding-block:56px 80px}
+
+/* section page */
+.sechead{padding-block:56px 36px;border-bottom:1px solid var(--line);margin-bottom:44px}
+.sechead h1{font-size:clamp(44px,6vw,84px);line-height:1;letter-spacing:-.03em;margin-top:12px}
+
+/* forum */
+.fhero{position:relative;color:var(--on-dark);background:var(--ink);min-height:340px;display:grid;align-items:end;overflow:hidden}
+.fhero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85}
+.fhero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,19,23,.2),rgba(16,19,23,.85))}
+.fhero .wrap{position:relative;z-index:1;width:100%;padding-block:44px;display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap}
+.fhero h1{font-size:clamp(48px,7vw,96px);line-height:.95;letter-spacing:-.03em;color:var(--on-dark)}
+.fhero p{margin:12px 0 0;max-width:52ch;color:rgba(255,255,255,.85);font-size:18px}
+.fhero .kicker{color:var(--felt)}
+.forum{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:56px;padding-block:36px 80px}
+.tabs{display:flex;gap:24px;border-bottom:1px solid var(--line);font-family:var(--sans);font-size:14px;font-weight:600;margin-bottom:6px;overflow-x:auto}
+.tabs button{border:0;background:none;padding:12px 0;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap}
+.tabs button[aria-pressed="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.thread{display:grid;grid-template-columns:72px minmax(0,1fr) 64px;gap:18px;align-items:center;padding-block:20px;border-bottom:1px solid var(--line)}
+.thumb{width:72px;height:72px;border-radius:4px;overflow:hidden;background:var(--wash);display:grid;place-items:center;font-family:var(--serif);font-size:30px;font-weight:600;color:var(--accent)}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thread h3{font-size:21px;font-weight:600;line-height:1.22;margin:4px 0}
+.thread:hover h3{color:var(--accent)}
+.thread .snip{margin:0;color:var(--muted);font-size:15.5px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+.count{text-align:right;font-family:var(--sans)}
+.count b{display:block;font-family:var(--mono);font-weight:400;font-size:26px;line-height:1}
+.count span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.fside{display:grid;gap:24px;align-content:start}
+.fside h3{font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding-bottom:10px;border-bottom:1px solid var(--line)}
+.wait{display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;align-items:center;padding-block:10px;border-bottom:1px solid var(--line)}
+.wait .thumb{width:52px;height:52px}
+.wait b{font-family:var(--serif);font-weight:600;font-size:15.5px;line-height:1.25}
+.wait:hover b{color:var(--accent)}
+.empty{padding:36px;border:1px dashed var(--line);border-radius:6px;color:var(--ink2);display:grid;gap:14px;justify-items:start;margin-top:20px}
+.status{font-family:var(--sans);font-size:14px;color:var(--ink2);padding:14px 18px;border-radius:6px;background:var(--wash);margin-block:18px}
+
+/* thread view */
+.tview{max-width:760px;margin-inline:auto;padding-block:40px 88px}
+.back{font-family:var(--sans);font-size:13.5px;font-weight:600;color:var(--muted)}
+.back:hover{color:var(--accent)}
+.tview h1{font-size:clamp(32px,4.4vw,52px);line-height:1.06;letter-spacing:-.02em;margin-block:14px 22px}
+.op{display:grid;grid-template-columns:120px minmax(0,1fr);gap:20px;padding:20px;border:1px solid var(--line);border-radius:6px;background:var(--wash);align-items:start}
+.op.plain{grid-template-columns:minmax(0,1fr)}
+.op .ph{aspect-ratio:1;border-radius:4px}
+.op q{font-family:var(--serif);font-style:italic;font-size:22px;line-height:1.3;font-weight:500;color:var(--ink);quotes:"“" "”"}
+.tag{display:inline-block;font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.posts{margin-top:18px}
+.post{display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;padding-block:20px;border-bottom:1px solid var(--line)}
+.av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-family:var(--sans);font-weight:800;font-size:15px;color:var(--ink)}
+.who{font-family:var(--sans);font-weight:700;font-size:14.5px;color:var(--ink)}
+.body{white-space:pre-wrap;overflow-wrap:anywhere;margin:6px 0 0;color:var(--ink2);font-size:18px;line-height:1.6}
+.linkbtn{background:none;border:0;color:var(--muted);font-family:var(--sans);font-size:12.5px;cursor:pointer;padding:0;text-decoration:underline}
+.linkbtn.warn{color:#B3261E}
+form.compose{display:grid;gap:10px;margin-top:28px;padding:24px;border:1px solid var(--line);border-radius:6px}
+.compose label{font-family:var(--sans);font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.compose input,.compose select,.compose textarea{width:100%;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:6px;padding:12px 14px;font-family:var(--serif);font-size:17px}
+.compose input:focus,.compose textarea:focus,.compose select:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px rgba(31,69,181,.12)}
+.compose textarea{min-height:140px;resize:vertical}
+.compose .row{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-top:4px}
+
+/* footer */
+footer{background:var(--wash);padding-block:56px 40px;margin-top:0}
+.fgrid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:40px}
+.fgrid p{margin:12px 0 0;color:var(--ink2);max-width:36ch;font-size:16px}
+.fgrid h4{font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 12px}
+.fgrid ul{list-style:none;margin:0;padding:0;display:grid;gap:8px;font-family:var(--sans);font-size:14px}
+.fgrid a:hover{color:var(--accent)}
+.fbase{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:44px;padding-top:18px;border-top:1px solid var(--line);font-family:var(--sans);font-size:12.5px;color:var(--muted)}
+
+@media (max-width:1020px){
+  .figrow{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:28px}
+  .figrow a:nth-child(3){border-right:0;margin-right:0}
+  .abody{grid-template-columns:minmax(0,1fr)}
+  .prose,.debate,.sources{grid-column:1;max-width:680px;width:100%;margin-inline:auto}
+  .aside{grid-column:1;position:static;max-width:680px;width:100%;margin-inline:auto;grid-row:1}
+  .forum{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:860px){
+  .cover,.lab,.lead-row,.fband{grid-template-columns:minmax(0,1fr)}
+  .cover .txt{order:2}
+  .grid3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .fgrid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .fgrid>div:first-child{grid-column:1/-1}
+  .nav{gap:18px}
+  .fband .ph{min-height:320px}
+}
+@media (max-width:560px){
+  body{font-size:17px}
+  .brand b{font-size:16px}
+  .top .wrap{gap:12px}
+  .nav a[data-nav="home"]{display:none}
+  .grid3{grid-template-columns:minmax(0,1fr)}
+  .figrow{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .figrow a{border-right:0;margin-right:0}
+  .controls,.readout{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .readout div:last-child{grid-column:1/-1}
+  .thread{grid-template-columns:56px minmax(0,1fr);}
+  .thread .thumb{width:56px;height:56px}
+  .thread .count{grid-column:2;text-align:left;display:flex;gap:6px;align-items:baseline}
+  .thread .count b{font-size:16px}
+  .op{grid-template-columns:minmax(0,1fr)}
+  .op .ph{aspect-ratio:16/9}
+  .prose{font-size:18px}
+  .fband .over,.flist{padding:22px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="top"><div class="wrap">
+  <a class="brand" href="#inicio" aria-label="ShotDepth Journal">
+    <svg viewBox="0 0 34 22" aria-hidden="true"><path d="M2 18 C 10 2, 22 2, 30 14" fill="none" stroke="#2347A6" stroke-width="2.2" stroke-linecap="round"/><circle cx="30" cy="15" r="3.6" fill="#CFE24B" stroke="#13201C" stroke-width="1"/></svg>
+    <b>SHOTDEPTH</b>
+  </a>
+  <nav class="nav" aria-label="Main">
+    <a href="#inicio" data-nav="home" id="nav-home"></a>
+    <a href="#foro" data-nav="forum" id="nav-forum"></a>
+  </nav>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" id="lang-es" data-lang="es">ES</button>
+    <button type="button" id="lang-en" data-lang="en">EN</button>
+  </div>
+</div></div>
+<div class="secbar"><div class="wrap"><nav class="secs" id="sections" aria-label="Sections"></nav></div></div>
+
+<main id="app"></main>
+
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div>
+        <a class="brand" href="#inicio" aria-label="ShotDepth Journal">
+          <svg viewBox="0 0 34 22" aria-hidden="true" style="width:36px;height:24px"><path d="M2 18 C 10 2, 22 2, 30 14" fill="none" stroke="#2347A6" stroke-width="2.2" stroke-linecap="round"/><circle cx="30" cy="15" r="3.6" fill="#CFE24B" stroke="#13201C" stroke-width="1"/></svg>
+          <b>SHOTDEPTH</b>
+        </a>
+        <p id="foot-about"></p>
+      </div>
+      <div><h4 id="foot-sec"></h4><ul id="foot-sections"></ul></div>
+      <div><h4 id="foot-comm"></h4><ul id="foot-links"></ul></div>
+    </div>
+    <div class="fbase"><span id="foot-l"></span><span id="foot-r"></span></div>
+  </div>
+</footer>
+
+<script>
+const ARTICLES = [
+{
+  slug: "magnus", section: "fisica", date: "2026-10-06", minutes: 7, featured: true,
+  figure: "+0.5 m", figureLabel: { es: "más margen sobre la red con 3000 rpm de topspin a 108 km/h", en: "extra net clearance with 3000 rpm of topspin at 108 km/h" },
+  es: {
+    title: "Por qué tu topspin cae: la física del efecto Magnus",
+    dek: "Una pelota que gira arrastra el aire a su alrededor y lo desvía. Esa fuerza invisible es la razón por la que el tenis moderno se juega por encima de la red y dentro de la pista.",
+    body: [
+      "Cuando una pelota avanza girando hacia delante (topspin), la parte superior de su superficie se mueve en contra del aire y la inferior a favor. La capa de aire que rodea la pelota se separa antes por arriba que por abajo, y la estela sale desviada hacia arriba. Por acción y reacción, la pelota recibe un empuje hacia abajo. Eso es el efecto Magnus, descrito por Heinrich Gustav Magnus en 1852 y medido en pelotas de tenis en túnel de viento en las últimas dos décadas.",
+      "## Una fuerza que depende del giro y de la velocidad",
+      "La fuerza de sustentación se expresa con un coeficiente, C<sub>L</sub>, que crece con la relación entre la velocidad de la superficie de la pelota y la velocidad de avance. Los ensayos de Goodwill, Chin y Haake (2004) mostraron que la pelota de tenis tiene además un coeficiente de arrastre alto, cercano a 0,55, por culpa del fieltro. Arrastre y Magnus actúan a la vez: la pelota frena y cae más rápido de lo que predice la gravedad sola.",
+      "## Lo que el simulador de portada enseña",
+      "Si lanzamos tres pelotas a 30 m/s (108 km/h) desde un metro de altura y obligamos a las tres a botar a 2,3 m de la línea de fondo, la plana tiene que salir casi horizontal y pasa la red con unos 55 cm de margen. Con 1500 rpm de topspin el ángulo de salida sube a unos 10° y el margen a 90 cm. Con 3000 rpm, cifra habitual en el drive de un profesional, la pelota puede cruzar la red a más de un metro por encima de la cinta y aun así caer dentro. Ese margen extra es tolerancia al error: el jugador puede pegar fuerte sin necesidad de rozar la red.",
+      "## El precio del giro",
+      "La energía que se invierte en girar la pelota no se invierte en hacerla avanzar, y el arrastre extra frena la bola. Un golpe con mucho efecto llega más lento, pero bota más alto y más adelante porque, al tocar el suelo, el giro se convierte en parte en velocidad horizontal. Por eso el topspin es especialmente eficaz en tierra batida, donde la fricción con la pista es alta.",
+      "El slice funciona al revés: el Magnus empuja hacia arriba, la pelota flota, pierde altura más tarde y bota bajo. Es la misma física, con el signo cambiado."
+    ],
+    question: "¿Ha hecho el topspin extremo que el tenis sea menos variado, o solo ha cambiado dónde está la variedad?"
+  },
+  en: {
+    title: "Why your topspin dips: the physics of the Magnus effect",
+    dek: "A spinning ball drags the air around it and deflects it. That invisible force is why the modern game is played high over the net and deep inside the court.",
+    body: [
+      "When a ball travels with forward rotation (topspin), the top of its surface moves against the oncoming air and the bottom moves with it. The boundary layer separates earlier on top than underneath, so the wake leaves the ball deflected upward. By Newton's third law the ball is pushed down. That is the Magnus effect, described by Heinrich Gustav Magnus in 1852 and measured on tennis balls in wind tunnels over the last two decades.",
+      "## A force that depends on spin and speed",
+      "The lift force is described by a coefficient, C<sub>L</sub>, that grows with the ratio of surface speed to forward speed. Wind-tunnel tests by Goodwill, Chin and Haake (2004) also showed that a tennis ball has an unusually high drag coefficient, close to 0.55, because of the felt. Drag and Magnus act together: the ball slows down and drops faster than gravity alone would predict.",
+      "## What the cover simulator shows",
+      "Launch three balls at 30 m/s (108 km/h) from one metre high and force all three to land 2.3 m inside the baseline. The flat ball has to leave almost horizontally and clears the net by about 55 cm. With 1,500 rpm of topspin the launch angle rises to about 10° and the margin to 90 cm. With 3,000 rpm, a typical figure for a professional forehand, the ball can cross more than a metre above the tape and still land in. That extra margin is error tolerance: the player can swing hard without skimming the net.",
+      "## The price of spin",
+      "Energy spent spinning the ball is not spent driving it forward, and the extra drag slows it. A heavy topspin shot arrives slower, but it kicks higher and further because at the bounce some of the spin turns into horizontal speed. That is why topspin is especially effective on clay, where friction with the court is high.",
+      "Slice works the other way round: Magnus pushes up, the ball floats, drops later and stays low after the bounce. Same physics, opposite sign."
+    ],
+    question: "Has extreme topspin made tennis less varied, or has it just moved where the variety lives?"
+  },
+  sources: [
+    "Goodwill S.R., Chin S.B., Haake S.J. (2004). Aerodynamics of spinning and non-spinning tennis balls. Journal of Wind Engineering and Industrial Aerodynamics, 92(11).",
+    "Cross R., Lindsey C. (2005). Technical Tennis: Racquets, Strings, Balls, Courts, Spin and Bounce. Racquet Tech Publishing.",
+    "Simulación propia / own simulation: m = 57 g, r = 3.35 cm, Cd = 0.55, C_L = 1/(2 + v/rω)."
+  ]
+},
+{
+  slug: "snapback", section: "equipo", date: "2026-10-02", minutes: 6,
+  figure: "snapback", figureLabel: { es: "las cuerdas principales se deslizan y vuelven, añadiendo giro", en: "main strings slide and spring back, adding spin" },
+  es: {
+    title: "Snapback: por qué el poliéster muerde la pelota",
+    dek: "Durante años se creyó que la textura de la cuerda generaba el efecto. Las mediciones de alta velocidad demostraron que la clave está en cuerdas que resbalan.",
+    body: [
+      "Una pelota pasa unos 4 a 5 milisegundos sobre el cordaje. En ese tiempo, si la raqueta sube por detrás de la pelota, la fricción arrastra las cuerdas principales hacia un lado. Cuando la pelota empieza a salir, esas cuerdas vuelven a su posición como un muelle y le dan un último empujón tangencial. A eso se le llama snapback.",
+      "## La investigación",
+      "Los ensayos de Rod Cross (Universidad de Sídney) y del laboratorio de Tennis Warehouse University compararon cordajes con cámaras de alta velocidad. Los que más efecto producían no eran los más rugosos, sino aquellos en los que las principales se deslizaban con más facilidad sobre las transversales. El monofilamento de poliéster, con una superficie lisa y poca fricción entre cuerdas, permite ese movimiento lateral y su regreso. El nylon multifilamento y la tripa natural se 'traban' más.",
+      "## Lo que significa en la pista",
+      "Las cuerdas texturizadas o de perfil poligonal pueden ayudar a agarrar la pelota, pero el factor dominante es el movimiento y la recuperación de las principales. Por eso un patrón abierto (16x19) suele generar más giro que uno cerrado (18x20): hay más espacio para que las cuerdas se muevan. La tensión también importa, aunque menos de lo que muchos jugadores creen.",
+      "El poliéster tiene un coste. Es más rígido, pierde tensión con rapidez durante las primeras horas y transmite más carga al brazo. Muchos jugadores recreativos usan cordajes híbridos: poliéster en las principales para el snapback y un material blando en las transversales."
+    ],
+    question: "¿El poliéster debería estar en la raqueta de un jugador recreativo, o es una moda que pagamos con el codo?"
+  },
+  en: {
+    title: "Snapback: why polyester bites the ball",
+    dek: "For years players believed string texture created spin. High-speed measurements showed the key is strings that slide.",
+    body: [
+      "A ball spends roughly 4 to 5 milliseconds on the string bed. If the racquet is brushing up behind the ball, friction drags the main strings sideways during that time. As the ball begins to leave, those strings spring back into place and give it one last tangential push. That is snapback.",
+      "## The research",
+      "Experiments by Rod Cross (University of Sydney) and the Tennis Warehouse University lab compared string beds with high-speed cameras. The beds that produced the most spin were not the roughest but those in which the mains slid most easily over the crosses. Polyester monofilament, with a slick surface and low string-on-string friction, allows that lateral movement and its return. Multifilament nylon and natural gut tend to lock in place.",
+      "## What it means on court",
+      "Textured or shaped strings may help grip the ball, but the dominant factor is how far the mains move and recover. That is why an open pattern (16x19) usually generates more spin than a dense one (18x20): there is more room for the strings to move. Tension matters too, though less than many players assume.",
+      "Polyester has a cost. It is stiffer, loses tension quickly in its first hours of play and transmits more load to the arm. Many club players use hybrids: poly in the mains for snapback and a softer string in the crosses."
+    ],
+    question: "Does polyester belong in a recreational player's racquet, or is it a fashion we pay for with our elbows?"
+  },
+  sources: [
+    "Cross R. (2010). Spin generation in tennis. Sports Engineering / ITF Tennis Science publications.",
+    "Tennis Warehouse University – Learning Center, string and spin research (twu.tennis-warehouse.com).",
+    "Brody H., Cross R., Lindsey C. (2002). The Physics and Technology of Tennis. Racquet Tech Publishing."
+  ]
+},
+{
+  slug: "pelota", section: "equipo", date: "2026-09-29", minutes: 5,
+  figure: "56.0–59.4 g", figureLabel: { es: "masa permitida por la ITF para una pelota de competición", en: "mass the ITF allows for a match ball" },
+  es: {
+    title: "56 gramos de reglamento: lo que se esconde dentro de una pelota",
+    dek: "Masa, diámetro, rebote y deformación. La ITF define la pelota con precisión de laboratorio, y aun así no todas las pelotas juegan igual.",
+    body: [
+      "El Apéndice I de las Reglas del Tenis de la ITF fija lo que una pelota debe cumplir. Su masa debe estar entre 56,0 y 59,4 gramos. Las pelotas tipo 1 y tipo 2 miden entre 6,54 y 6,86 cm de diámetro; la tipo 3, pensada para pistas rápidas, es más grande (7,00 a 7,30 cm) para frenar el juego. Soltada desde 254 cm sobre una superficie rígida, la pelota tiene que rebotar entre 135 y 147 cm.",
+      "## Presurizada o sin presión",
+      "La mayoría de pelotas de competición tienen un núcleo de caucho con aire a una presión superior a la atmosférica. Esa presión aporta parte del rebote, y por eso pierden vida en cuanto se abre el bote: el gas se escapa lentamente a través del caucho. Las pelotas sin presión obtienen el rebote de un núcleo más grueso y rígido. Duran más, pero se sienten más pesadas en la raqueta.",
+      "## El fieltro manda",
+      "El fieltro, una mezcla de lana y nylon, determina gran parte del arrastre aerodinámico. Cuando se esponja con el uso, la pelota frena más en el aire. Cuando se desgasta, vuela más rápido. Por eso un mismo bote puede sentirse distinto en el primer juego y en el noveno. En los torneos profesionales se cambian las pelotas tras los primeros 7 juegos y luego cada 9.",
+      "## Altitud y temperatura",
+      "Con menos densidad del aire, la pelota frena menos. La ITF homologa pelotas específicas para altitud por encima de 1219 m. La temperatura también cuenta: una pelota fría rebota menos, y una caliente gana presión interna y vuela más."
+    ],
+    question: "¿Deberían los torneos de un mismo circuito usar todos la misma pelota?"
+  },
+  en: {
+    title: "56 grams of regulation: what hides inside a tennis ball",
+    dek: "Mass, diameter, rebound and deformation. The ITF defines the ball with lab precision, and still no two balls play quite the same.",
+    body: [
+      "Appendix I of the ITF Rules of Tennis sets what a ball must meet. Its mass must be between 56.0 and 59.4 grams. Type 1 and Type 2 balls measure 6.54 to 6.86 cm in diameter; Type 3, meant for fast courts, is larger (7.00 to 7.30 cm) to slow the game down. Dropped from 254 cm onto a rigid surface, a ball must rebound between 135 and 147 cm.",
+      "## Pressurised or pressureless",
+      "Most match balls have a rubber core filled with air above atmospheric pressure. That pressure supplies part of the bounce, which is why they lose life once the can is opened: the gas slowly diffuses out through the rubber. Pressureless balls get their bounce from a thicker, stiffer core. They last longer but feel heavier on the racquet.",
+      "## The felt is in charge",
+      "The felt, a wool and nylon blend, accounts for much of the aerodynamic drag. When it fluffs up with use, the ball slows more in the air. When it wears thin, the ball flies faster. That is why the same can feels different in game one and game nine. On the pro tours balls are changed after the first 7 games and then every 9.",
+      "## Altitude and temperature",
+      "Thinner air means less drag. The ITF approves specific high-altitude balls for play above 1,219 m. Temperature matters too: a cold ball bounces less, and a warm one gains internal pressure and flies further."
+    ],
+    question: "Should every tournament on the same tour use the same ball?"
+  },
+  sources: [
+    "International Tennis Federation. Rules of Tennis, Appendix I: The Ball.",
+    "ITF Technical Centre – Approved balls and test methods.",
+    "Cross R., Lindsey C. (2005). Technical Tennis."
+  ]
+},
+{
+  slug: "saque", section: "biomecanica", date: "2026-09-25", minutes: 8,
+  figure: "51 %", figureLabel: { es: "de la energía cinética del saque se genera en piernas, cadera y tronco", en: "of serve kinetic energy is generated by legs, hips and trunk" },
+  es: {
+    title: "La cadena cinética del saque: el brazo es el último eslabón",
+    dek: "Un saque a más de 200 km/h no nace en el hombro. Nace en el suelo y viaja hacia arriba, segmento a segmento.",
+    body: [
+      "La biomecánica describe el saque como una cadena cinética: una secuencia en la que cada segmento del cuerpo acelera, alcanza su pico de velocidad y transfiere la energía al siguiente. Piernas, cadera, tronco, hombro, codo, muñeca y raqueta. Cuando el orden y el tiempo son correctos, la velocidad se suma. Cuando falla un eslabón, los siguientes tienen que compensar.",
+      "## Los números de Kibler",
+      "En un trabajo clásico de 1995, W. Ben Kibler estimó que piernas, cadera y tronco aportan alrededor del 51 % de la energía cinética y el 54 % de la fuerza que se transmite al golpe. El hombro aporta solo una fracción. Esto tiene una consecuencia práctica: un jugador que no flexiona las rodillas obliga al hombro a generar hasta un tercio más de velocidad de rotación para llegar al mismo resultado, con más carga sobre la articulación.",
+      "## La rotación interna del hombro",
+      "Los estudios de Bruce Elliott y su grupo con cámaras de alta velocidad mostraron que, en los últimos instantes antes del impacto, la rotación interna del brazo (el giro del húmero sobre su eje) es el mayor contribuyente individual a la velocidad de la raqueta, seguido de la flexión de la muñeca. Es el latigazo final de la cadena, y por eso es también la fase donde más lesiones de hombro se producen.",
+      "## Implicaciones para entrenar",
+      "Trabajar la fuerza de piernas y la rotación del tronco no es preparación física genérica: es velocidad de saque. Y el trabajo de rotadores externos del hombro, que frenan el brazo tras el impacto, es la mejor prevención para la fase más violenta del gesto."
+    ],
+    question: "¿Se enseña el saque de arriba abajo (la mano y la raqueta primero) cuando la ciencia dice que se construye de abajo arriba?"
+  },
+  en: {
+    title: "The serve's kinetic chain: the arm is the last link",
+    dek: "A 200 km/h serve doesn't start at the shoulder. It starts at the ground and travels up, segment by segment.",
+    body: [
+      "Biomechanics describes the serve as a kinetic chain: a sequence in which each body segment accelerates, reaches its peak speed and passes the energy on to the next. Legs, hips, trunk, shoulder, elbow, wrist and racquet. When the order and timing are right, speed adds up. When one link fails, the ones after it have to compensate.",
+      "## Kibler's numbers",
+      "In a classic 1995 paper, W. Ben Kibler estimated that legs, hips and trunk contribute about 51% of the kinetic energy and 54% of the force delivered to the shot. The shoulder supplies only a fraction. The practical consequence: a player who doesn't bend the knees forces the shoulder to produce up to a third more rotational velocity for the same result, with more load on the joint.",
+      "## Shoulder internal rotation",
+      "Work by Bruce Elliott and colleagues using high-speed cameras showed that in the final instants before impact, internal rotation of the upper arm (the humerus twisting on its own axis) is the largest single contributor to racquet speed, followed by wrist flexion. It is the final whip of the chain, and that is why it is also the phase where most shoulder injuries happen.",
+      "## What it means for training",
+      "Leg strength and trunk rotation work is not generic conditioning: it is serve speed. And strengthening the external rotators, which decelerate the arm after impact, is the best protection for the most violent phase of the motion."
+    ],
+    question: "Do we teach the serve top-down (hand and racquet first) when the science says it is built bottom-up?"
+  },
+  sources: [
+    "Kibler W.B. (1995). Biomechanical analysis of the shoulder during tennis activities. Clinics in Sports Medicine, 14(1).",
+    "Elliott B., Marshall R., Noffal G. (1995). Contributions of upper limb segment rotations during the power serve in tennis. Journal of Applied Biomechanics, 11(4).",
+    "Kovacs M., Ellenbecker T. (2011). An 8-stage model for evaluating the tennis serve. Sports Health, 3(6)."
+  ]
+},
+{
+  slug: "intermitente", section: "fisiologia", date: "2026-09-22", minutes: 6,
+  figure: "< 10 s", figureLabel: { es: "duración media de un punto en el circuito profesional", en: "average point length on the pro tour" },
+  es: {
+    title: "Un deporte de sprints con pausas: lo que pide un partido a tu metabolismo",
+    dek: "Tres horas de partido, pero menos de una de juego real. El tenis es intermitente, y entrenarlo como un deporte de resistencia continua es un error común.",
+    body: [
+      "Las revisiones de Mark Kovacs (2007) y de Fernández-Fernández, Sanz-Rivas y Méndez-Villanueva (2009) dibujan un perfil claro: los puntos duran de media menos de 10 segundos, seguidos de pausas de hasta 25 segundos entre puntos y 90 entre juegos impares. El tiempo efectivo de juego, con la pelota en movimiento, ronda el 20-30 % del total del partido según la superficie.",
+      "## Explosivo, pero con base aeróbica",
+      "Cada punto se resuelve con acciones cortas y potentes: un jugador cambia de dirección unas cuatro veces por punto y recorre pocos metros por golpe. Esa energía viene sobre todo de los fosfágenos y la glucólisis. Pero lo que permite repetir esos esfuerzos durante horas es la capacidad aeróbica: es la que recarga la fosfocreatina en la pausa. Por eso la frecuencia cardíaca media en partido suele moverse entre 140 y 160 pulsaciones, y el lactato rara vez es muy alto.",
+      "## Cómo debería entrenarse",
+      "Correr 40 minutos a ritmo constante mejora la base, pero no reproduce el patrón del juego. Los entrenamientos interválicos con esfuerzos de 5 a 15 segundos y pausas de 10 a 25, con cambios de dirección, se parecen mucho más a lo que pasa en la pista. También lo hacen los ejercicios de pista con densidad controlada: series de bolas con un tiempo de trabajo y descanso fijado.",
+      "El sprint en línea recta tampoco basta. El tenis se juega en desplazamientos laterales y frenadas, y la capacidad de frenar es tan entrenable como la de acelerar."
+    ],
+    question: "¿Sigue teniendo sentido el clásico 'salir a correr' en la preparación de un tenista?"
+  },
+  en: {
+    title: "A sport of sprints and pauses: what a match asks of your metabolism",
+    dek: "Three hours of match, less than one of real play. Tennis is intermittent, and training it like a continuous endurance sport is a common mistake.",
+    body: [
+      "Reviews by Mark Kovacs (2007) and by Fernández-Fernández, Sanz-Rivas and Méndez-Villanueva (2009) paint a clear profile: points last under 10 seconds on average, followed by up to 25 seconds between points and 90 at odd-game changeovers. Effective playing time, with the ball in play, is around 20-30% of the match depending on the surface.",
+      "## Explosive, with an aerobic base",
+      "Each point is decided by short, powerful actions: a player changes direction about four times per point and covers only a few metres per shot. That energy comes mostly from phosphagens and glycolysis. But what lets you repeat those efforts for hours is aerobic capacity, which recharges phosphocreatine during the pause. That is why average match heart rate tends to sit between 140 and 160 bpm and lactate is rarely very high.",
+      "## How it should be trained",
+      "A 40-minute steady run builds the base but doesn't reproduce the game's pattern. Interval sessions with 5-15 second efforts and 10-25 second rests, with direction changes, look much more like what happens on court. So do on-court drills with controlled density: ball series with a fixed work and rest time.",
+      "Straight-line sprinting is not enough either. Tennis is played in lateral movement and braking, and the ability to decelerate is as trainable as the ability to accelerate."
+    ],
+    question: "Does the classic 'go for a run' still make sense in a tennis player's conditioning?"
+  },
+  sources: [
+    "Kovacs M.S. (2007). Tennis physiology: training the competitive athlete. Sports Medicine, 37(3).",
+    "Fernández-Fernández J., Sanz-Rivas D., Méndez-Villanueva A. (2009). A review of the activity profile and physiological demands of tennis match play. Strength and Conditioning Journal, 31(4).",
+    "ITF Coaching & Sport Science Review (itfcoachingreview.com)."
+  ]
+},
+{
+  slug: "nutricion", section: "nutricion", date: "2026-09-18", minutes: 6,
+  figure: "30–60 g/h", figureLabel: { es: "de carbohidratos en partidos de más de 90 minutos", en: "of carbohydrate in matches longer than 90 minutes" },
+  es: {
+    title: "Carbohidratos, sodio y cafeína en un partido de tres horas",
+    dek: "El plátano en el cambio de lado no es una superstición. Pero la cantidad, el momento y la sal importan más de lo que parece.",
+    body: [
+      "En un partido largo, el glucógeno muscular y la glucosa en sangre bajan, y con ellos la precisión y la toma de decisiones. Las recomendaciones para el tenis (Ranchordas y colaboradores, 2013) proponen tomar entre 30 y 60 gramos de carbohidratos por hora cuando el partido supera los 90 minutos. Un plátano mediano aporta unos 25 g; una bebida deportiva, unos 6 g por cada 100 ml.",
+      "## Sudor y sal",
+      "En calor, un tenista puede sudar más de 2,5 litros por hora. Los trabajos de Michael Bergeron con jugadores que sufrían calambres mostraron que muchos eran 'sudadores salados' con pérdidas de sodio muy altas. Beber solo agua en esas condiciones diluye el sodio en sangre. Por eso en días calurosos se recomiendan bebidas con electrolitos y, en jugadores propensos, sal añadida.",
+      "Una forma sencilla de conocer tu tasa de sudor: pésate antes y después de entrenar, suma lo que bebiste y divide por las horas. Perder más del 2 % del peso corporal empieza a afectar al rendimiento.",
+      "## Cafeína",
+      "La cafeína es una de las pocas ayudas ergogénicas con evidencia sólida. La posición de la International Society of Sports Nutrition (2021) sitúa la dosis eficaz entre 3 y 6 mg por kilo, unos 60 minutos antes. En tenis se han descrito mejoras en la precisión del golpe y en la velocidad en momentos de fatiga, aunque la respuesta varía mucho de persona a persona y puede afectar al sueño en partidos nocturnos."
+    ],
+    question: "¿Qué comes y bebes tú en un partido largo, y lo has medido alguna vez?"
+  },
+  en: {
+    title: "Carbs, sodium and caffeine in a three-hour match",
+    dek: "The banana at the changeover isn't superstition. But amount, timing and salt matter more than they seem.",
+    body: [
+      "In a long match, muscle glycogen and blood glucose fall, and accuracy and decision-making fall with them. Tennis nutrition guidance (Ranchordas et al., 2013) suggests 30 to 60 grams of carbohydrate per hour once a match passes 90 minutes. A medium banana provides about 25 g; a sports drink about 6 g per 100 ml.",
+      "## Sweat and salt",
+      "In the heat a tennis player can sweat more than 2.5 litres per hour. Michael Bergeron's work with cramp-prone players found many were 'salty sweaters' with very high sodium losses. Drinking only water in those conditions dilutes blood sodium. That is why electrolyte drinks are recommended on hot days, and added salt for players prone to cramping.",
+      "A simple way to estimate your sweat rate: weigh yourself before and after training, add what you drank and divide by the hours. Losing more than 2% of body mass starts to hurt performance.",
+      "## Caffeine",
+      "Caffeine is one of the few ergogenic aids with solid evidence. The International Society of Sports Nutrition position stand (2021) puts the effective dose at 3 to 6 mg per kilogram, about 60 minutes before. In tennis it has been linked to better stroke accuracy and speed under fatigue, though responses vary widely and it can disrupt sleep after night matches."
+    ],
+    question: "What do you eat and drink in a long match, and have you ever measured it?"
+  },
+  sources: [
+    "Ranchordas M.K., Rogerson D., Ruddock A., Killer S.C., Winter E.M. (2013). Nutrition for tennis: practical recommendations. Journal of Sports Science & Medicine, 12(2).",
+    "Bergeron M.F. (2003). Heat cramps: fluid and electrolyte challenges during tennis in the heat. Journal of Science and Medicine in Sport, 6(1).",
+    "Guest N.S. et al. (2021). International Society of Sports Nutrition position stand: caffeine and exercise performance. JISSN, 18(1)."
+  ]
+},
+{
+  slug: "recuperacion", section: "recuperacion", date: "2026-09-15", minutes: 6,
+  figure: "+ sueño", figureLabel: { es: "dormir más mejoró la precisión del saque en tenistas universitarios", en: "more sleep improved serve accuracy in college players" },
+  es: {
+    title: "Agua fría, sueño y el arte de recuperar",
+    dek: "El baño de hielo es la imagen de la recuperación. La ciencia dice que depende de para qué lo uses, y que dormir sigue siendo lo que más funciona.",
+    body: [
+      "Entre dos partidos de un torneo hay a veces menos de 24 horas. En ese contexto, todo lo que reduzca el dolor muscular y la sensación de fatiga tiene valor. La inmersión en agua fría lo consigue en muchos estudios: reduce el dolor percibido y la inflamación a corto plazo.",
+      "## El matiz de Roberts",
+      "En 2015, Llion Roberts y su equipo publicaron en The Journal of Physiology que el agua fría después del entrenamiento de fuerza atenuaba la señal anabólica y, a lo largo de 12 semanas, las ganancias de masa y fuerza muscular. La conclusión práctica: en semana de competición, el frío ayuda; en bloque de pretemporada, cuando buscas adaptarte, puede restar.",
+      "## El sueño, la herramienta infravalorada",
+      "Un estudio de Schwartz y Simon (2015) con tenistas universitarios que ampliaron su sueño durante una semana encontró mejoras en la precisión del saque. Resultados parecidos se habían visto antes con jugadores de baloncesto de Stanford (Mah y colaboradores, 2011). Dormir es cuando se consolida el aprendizaje motor y se repara el tejido.",
+      "## Lo básico, ordenado",
+      "Primero: sueño suficiente y regular. Segundo: reponer carbohidratos y proteína en las horas siguientes al partido. Tercero: hidratación según lo perdido. Solo después tienen sentido el frío, la compresión o los masajes, que funcionan sobre todo en la sensación de recuperación."
+    ],
+    question: "¿Alguien ha notado de verdad la diferencia con el baño de hielo, o es más ritual que fisiología?"
+  },
+  en: {
+    title: "Cold water, sleep and the art of recovery",
+    dek: "The ice bath is the image of recovery. The science says it depends what you use it for, and that sleep still works best.",
+    body: [
+      "Between two matches at a tournament there is sometimes less than 24 hours. In that setting, anything that reduces soreness and the feeling of fatigue has value. Cold-water immersion does that in many studies: it lowers perceived soreness and short-term inflammation.",
+      "## The Roberts caveat",
+      "In 2015 Llion Roberts and colleagues reported in The Journal of Physiology that cold water after strength training blunted anabolic signalling and, over 12 weeks, gains in muscle mass and strength. The practical takeaway: in a competition week, cold helps; in a pre-season block, when you want to adapt, it may work against you.",
+      "## Sleep, the underrated tool",
+      "A study by Schwartz and Simon (2015) of college tennis players who extended their sleep for a week found improved serve accuracy. Similar results had been seen earlier with Stanford basketball players (Mah et al., 2011). Sleep is when motor learning is consolidated and tissue is repaired.",
+      "## The basics, in order",
+      "First: enough regular sleep. Second: carbohydrate and protein in the hours after the match. Third: rehydrate based on what you lost. Only then do cold water, compression or massage make sense, and they act mostly on how recovered you feel."
+    ],
+    question: "Has anyone really felt the difference from an ice bath, or is it more ritual than physiology?"
+  },
+  sources: [
+    "Roberts L.A. et al. (2015). Post-exercise cold water immersion attenuates acute anabolic signalling and long-term adaptations in muscle to strength training. The Journal of Physiology, 593(18).",
+    "Schwartz J., Simon R.D. (2015). Sleep extension improves serving accuracy: a study with college varsity tennis players. Physiology & Behavior, 151.",
+    "Mah C.D. et al. (2011). The effects of sleep extension on the athletic performance of collegiate basketball players. Sleep, 34(7)."
+  ]
+},
+{
+  slug: "rituales", section: "mente", date: "2026-09-11", minutes: 5,
+  figure: "25 s", figureLabel: { es: "entre puntos, según el reloj de saque", en: "between points, by the serve clock" },
+  es: {
+    title: "Los 25 segundos: lo que pasa en la cabeza entre punto y punto",
+    dek: "El tenis es uno de los pocos deportes en los que se pasa más tiempo sin jugar que jugando. Lo que haces en esas pausas también es entrenable.",
+    body: [
+      "Desde que el reloj de saque se generalizó en el circuito, el jugador tiene 25 segundos entre el final de un punto y el inicio del siguiente. En un partido de tres horas, eso suma más tiempo que el de juego real. El psicólogo James Loehr estudió en los años 80 y 90 qué hacían los mejores en ese intervalo y propuso una rutina en cuatro fases.",
+      "## Las cuatro fases de Loehr",
+      "Respuesta física positiva: cambiar la raqueta de mano, darse la vuelta, una postura erguida que corte la emoción del punto anterior. Relajación: respiración lenta y caminar sin prisa hacia el fondo. Preparación: decidir el plan del siguiente punto (saque, dirección, patrón). Ritual: botes de pelota, ajuste de cuerdas, una secuencia fija antes de golpear. Lo que se ve como una manía es una forma de llevar la atención al presente.",
+      "## La mirada tranquila",
+      "La investigadora Joan Vickers describió el quiet eye: una fijación visual estable justo antes de ejecutar un gesto. Los expertos la alargan más que los novatos, y en deportes de precisión se asocia con mayor acierto. En el saque, mirar la pelota en el lanzamiento con calma, sin moverse, es una versión de ese fenómeno.",
+      "Practicar la rutina en los entrenamientos, no solo en partido, es lo que la hace automática cuando hay presión."
+    ],
+    question: "¿Cuál es tu ritual antes de sacar, y lo diseñaste o simplemente apareció?"
+  },
+  en: {
+    title: "The 25 seconds: what goes on in the head between points",
+    dek: "Tennis is one of the few sports where you spend more time not playing than playing. What you do in those pauses is trainable too.",
+    body: [
+      "Since the serve clock spread across the tours, players have 25 seconds between the end of one point and the start of the next. In a three-hour match that adds up to more time than actual play. Psychologist James Loehr studied what top players did in that window in the 1980s and 90s and proposed a four-stage routine.",
+      "## Loehr's four stages",
+      "Positive physical response: switch the racquet hand, turn away, an upright posture that cuts off the emotion of the last point. Relaxation: slow breathing and an unhurried walk to the baseline. Preparation: decide the plan for the next point (serve, direction, pattern). Ritual: ball bounces, string straightening, a fixed sequence before striking. What looks like a tic is a way to bring attention back to the present.",
+      "## The quiet eye",
+      "Researcher Joan Vickers described the quiet eye: a stable visual fixation just before executing a movement. Experts hold it longer than novices, and in precision sports it is linked to accuracy. On the serve, watching the toss calmly, without moving, is one version of it.",
+      "Practising the routine in training, not only in matches, is what makes it automatic under pressure."
+    ],
+    question: "What is your pre-serve ritual, and did you design it or did it just appear?"
+  },
+  sources: [
+    "Loehr J.E. (1990). The Mental Game. Plume / Loehr's between-point routine research.",
+    "Vickers J.N. (2007). Perception, Cognition, and Decision Training: The Quiet Eye in Action. Human Kinetics.",
+    "ATP / WTA rulebooks: time violation and serve clock (25 seconds)."
+  ]
+},
+{
+  slug: "lineas", section: "tecnologia", date: "2026-09-08", minutes: 6,
+  figure: "mm", figureLabel: { es: "el error medio de los sistemas de cantado electrónico se mide en milímetros", en: "electronic line-calling error is measured in millimetres" },
+  es: {
+    title: "Adiós a los jueces de línea: la era del ojo electrónico",
+    dek: "Cámaras, triangulación y un modelo de la pelota en 3D. Así decide una máquina si una bola entró, y por qué no todo el mundo está contento.",
+    body: [
+      "Los sistemas de cantado electrónico como Hawk-Eye usan una red de cámaras de alta velocidad alrededor de la pista. Cada cámara localiza la pelota en su imagen; al combinar varias vistas, el sistema reconstruye su posición en tres dimensiones y ajusta una trayectoria. El punto de bote, con la deformación de la pelota sobre la pista, se calcula a partir de esa trayectoria. El error medio que la ITF acepta en sus pruebas se mide en pocos milímetros.",
+      "## De la revisión al cantado en directo",
+      "Durante años la tecnología solo servía para que el jugador pidiera revisión. Desde 2025 el circuito ATP usa cantado electrónico en directo en todos sus torneos, y Wimbledon prescindió de los jueces de línea en 2025 tras 147 años. Los Grand Slams en pista dura llevaban ya varias temporadas usándolo.",
+      "## Lo que se gana y lo que se pierde",
+      "Se gana en consistencia y se eliminan discusiones. Pero el sistema no es infalible a la vista del público: en Wimbledon 2025 un fallo humano en la operación del sistema dejó sin cantar varias bolas durante un partido, y se tuvo que repetir un punto. También se pierde una profesión de entrada al arbitraje y parte del 'teatro' del tenis.",
+      "## Más allá de las líneas",
+      "Los mismos datos de seguimiento alimentan velocidad de pelota, efecto, altura sobre la red y mapas de posición. Lo que antes era análisis de laboratorio se ha convertido en estadística en directo para la televisión y en material de trabajo para los entrenadores."
+    ],
+    question: "¿Debería la tierra batida adoptar también el cantado electrónico, o la marca en el suelo es suficiente?"
+  },
+  en: {
+    title: "Goodbye line judges: the era of the electronic eye",
+    dek: "Cameras, triangulation and a 3D model of the ball. How a machine decides whether a ball was in, and why not everyone is happy.",
+    body: [
+      "Electronic line-calling systems such as Hawk-Eye use a ring of high-speed cameras around the court. Each camera locates the ball in its image; by combining several views the system reconstructs its 3D position and fits a trajectory. The bounce point, including the ball's deformation on the court, is computed from that trajectory. The mean error the ITF accepts in testing is a few millimetres.",
+      "## From challenge to live calling",
+      "For years the technology only served player challenges. Since 2025 the ATP Tour has used live electronic line calling at all its events, and Wimbledon dropped line judges in 2025 after 147 years. The hard-court Grand Slams had already been using it for several seasons.",
+      "## What we gain and lose",
+      "We gain consistency and remove arguments. But the system is not infallible in the public's eyes: at Wimbledon 2025 a human error in operating the system left several balls uncalled during a match, and a point had to be replayed. We also lose an entry-level path into officiating and some of tennis's theatre.",
+      "## Beyond the lines",
+      "The same tracking data feeds ball speed, spin, net clearance and court-position maps. What used to be lab analysis is now live TV statistics and working material for coaches."
+    ],
+    question: "Should clay adopt electronic line calling too, or is the ball mark enough?"
+  },
+  sources: [
+    "ITF Technical Centre – Electronic Line Calling evaluation and approval.",
+    "ATP Tour (2024). Announcement of Electronic Line Calling Live at all tour-level events from 2025.",
+    "All England Lawn Tennis Club (2024). Announcement of live electronic line calling at The Championships 2025."
+  ]
+},
+{
+  slug: "codo", section: "medicina", date: "2026-09-04", minutes: 6,
+  figure: "35–54", figureLabel: { es: "años: la franja de edad con más casos de codo de tenista", en: "years: the age band with the most tennis elbow cases" },
+  es: {
+    title: "Codo de tenista: ¿culpa de la raqueta, de la técnica o de la carga?",
+    dek: "La epicondilalgia lateral no es exclusiva del tenis, pero el tenis la conoce bien. Lo que dice la evidencia sobre causas y tratamientos.",
+    body: [
+      "La epicondilalgia lateral, el 'codo de tenista', es una tendinopatía de los extensores de la muñeca en su origen en el epicóndilo. Afecta a entre el 1 y el 3 % de la población general, con más casos entre los 35 y los 54 años. La mayoría de las personas que la sufren no juegan al tenis, pero entre los jugadores recreativos la incidencia a lo largo de la vida es alta.",
+      "## Factores de riesgo",
+      "El más estudiado es la técnica del revés a una mano: los jugadores que golpean 'adelantando el codo' y con la muñeca flexionada cargan más los extensores. La edad, el volumen de juego y los cambios bruscos de carga también cuentan. Sobre el material, la evidencia es menos firme: un grip demasiado pequeño, cordajes muy rígidos o tensos y raquetas ligeras que vibran más se señalan a menudo, pero los estudios controlados son escasos.",
+      "## Tratamiento: el tendón quiere carga",
+      "Las infiltraciones de corticoides alivian el dolor a corto plazo, pero un ensayo publicado en JAMA (Coombes y colaboradores, 2013) encontró peores resultados al año frente a placebo. El tratamiento con más respaldo es el ejercicio de carga progresiva (isométrico, excéntrico y luego de fuerza), combinado con modificar lo que provoca el dolor. La mayoría de los casos mejora en meses.",
+      "## Material a favor",
+      "Cambiar a un cordaje más blando o un híbrido, bajar la tensión y comprobar el tamaño del grip son medidas baratas que muchos fisioterapeutas recomiendan, aunque deben ir acompañadas del trabajo de fuerza."
+    ],
+    question: "Si has tenido codo de tenista, ¿qué te funcionó de verdad: material, técnica o ejercicio?"
+  },
+  en: {
+    title: "Tennis elbow: blame the racquet, the technique or the load?",
+    dek: "Lateral epicondylalgia isn't unique to tennis, but tennis knows it well. What the evidence says about causes and treatments.",
+    body: [
+      "Lateral epicondylalgia, 'tennis elbow', is a tendinopathy of the wrist extensors where they attach to the lateral epicondyle. It affects 1 to 3% of the general population, peaking between ages 35 and 54. Most people who get it don't play tennis, but among recreational players lifetime incidence is high.",
+      "## Risk factors",
+      "The most studied is one-handed backhand technique: players who lead with the elbow and a flexed wrist load the extensors more. Age, playing volume and sudden changes in load also count. On equipment the evidence is weaker: grips that are too small, very stiff or tight strings and light racquets that vibrate more are often blamed, but controlled studies are scarce.",
+      "## Treatment: the tendon wants load",
+      "Corticosteroid injections relieve pain in the short term, but a trial in JAMA (Coombes et al., 2013) found worse results at one year compared with placebo. The best-supported treatment is progressive loading exercise (isometric, eccentric and then strength), combined with modifying whatever provokes the pain. Most cases improve within months.",
+      "## Let the gear help",
+      "Switching to a softer string or a hybrid, dropping tension and checking grip size are cheap measures many physiotherapists recommend, but they should go together with strength work."
+    ],
+    question: "If you've had tennis elbow, what actually worked: gear, technique or exercise?"
+  },
+  sources: [
+    "Coombes B.K. et al. (2013). Effect of corticosteroid injection, physiotherapy, or both on clinical outcomes in patients with unilateral lateral epicondylalgia: a randomized controlled trial. JAMA, 309(5).",
+    "Shiri R. et al. (2006). Prevalence and determinants of lateral and medial epicondylitis: a population study. American Journal of Epidemiology, 164(11).",
+    "Ellenbecker T.S. et al. (2013). Current concepts in examination and treatment of elbow tendon injury. Sports Health, 5(2)."
+  ]
+}
+];
+
+</script>
+<script>
+(function(){
+"use strict";
+
+const PHOTOS = {
+  magnus:{by:"Kevin Mueller", pos:"55% 50%"}, snapback:{by:"Ben Hershey", pos:"40% 50%"}, pelota:{by:"JK Sloan", pos:"60% 60%"},
+  saque:{by:"Moises Alex", pos:"70% 40%"}, intermitente:{by:"Jim Weatherford", pos:"45% 55%"}, nutricion:{by:"Anastasia Eremina", pos:"55% 50%"},
+  recuperacion:{by:"Aman Krishna", pos:"50% 50%"}, rituales:{by:"John Fornander", pos:"60% 45%"}, lineas:{by:"Mario Gogh", pos:"40% 40%"},
+  codo:{by:"Sincerely Media", pos:"40% 55%"}, foro:{by:"Dylan Freedom", pos:"50% 40%"}
+};
+const img = k => `img/${k}.jpg`;
+const photo = (k, alt, cls="") => `<div class="ph ${cls}"><img src="${img(k)}" alt="${esc(alt||"")}" loading="lazy" style="object-position:${(PHOTOS[k]||{}).pos||"50% 50%"}"></div>`;
+
+const SECTIONS = [
+  {id:"fisica", es:"Física", en:"Physics"},
+  {id:"equipo", es:"Equipo y materiales", en:"Gear & materials"},
+  {id:"biomecanica", es:"Biomecánica", en:"Biomechanics"},
+  {id:"fisiologia", es:"Entrenamiento", en:"Training"},
+  {id:"nutricion", es:"Nutrición", en:"Nutrition"},
+  {id:"recuperacion", es:"Recuperación", en:"Recovery"},
+  {id:"mente", es:"Psicología", en:"Psychology"},
+  {id:"tecnologia", es:"Tecnología", en:"Technology"},
+  {id:"medicina", es:"Medicina", en:"Medicine"}
+];
+const CATS = [
+  {id:"equipo", es:"Equipo", en:"Gear"},
+  {id:"tecnica", es:"Técnica", en:"Technique"},
+  {id:"entrenamiento", es:"Entrenamiento", en:"Training"},
+  {id:"nutricion", es:"Nutrición", en:"Nutrition"},
+  {id:"mente", es:"Psicología", en:"Psychology"},
+  {id:"salud", es:"Lesiones y salud", en:"Injuries & health"},
+  {id:"tour", es:"Circuito profesional", en:"Pro tour"},
+  {id:"otro", es:"Otro", en:"Other"}
+];
+
+const T = {
+  es:{
+    home:"Journal", forum:"Foro", tagline:"La ciencia detrás de cada golpe", issue:"ShotDepth Journal · Número 01 · Octubre 2026",
+    cover:"Portada", read:"Leer el artículo", minutes:"min de lectura",
+    latest:"Lo último", allStories:"Todos los artículos",
+    labK:"Laboratorio interactivo", labT:"Mueve el efecto y mira cómo cambia el margen sobre la red",
+    labP:"Tres pelotas a la misma velocidad, todas botando a 2,3 m de la línea de fondo. Cuanto más topspin, más alto puedes pasar la red sin que la bola se vaya larga.",
+    labNote:"Modelo físico con arrastre y efecto Magnus. Escala vertical ×3.",
+    spin:"Topspin", speed:"Velocidad", angle:"Ángulo de salida", clearance:"Sobre la red", flight:"Tiempo de vuelo",
+    figsT:"En cifras", keyFigure:"La cifra", sources:"Fuentes", debateQ:"Pregunta para el debate",
+    enterDebate:"Entrar al debate", replies:"respuestas", reply:"respuesta", more:"Sigue leyendo",
+    fbandK:"Comunidad", fbandT:"El foro", fbandP:"Cada artículo tiene su debate. Y puedes abrir el tuyo sobre cualquier tema de tenis.",
+    openTopic:"Abrir un tema", goForum:"Ver el foro", noActivity:"Aún no hay conversaciones. Abre la primera.",
+    forumIntro:"Debates sobre cada artículo y temas libres sobre todo lo que tenga que ver con el tenis.",
+    newTopic:"Nuevo tema", tabAll:"Todo", tabArticles:"Debates de artículos", tabFree:"Temas libres",
+    articleTag:"Debate del artículo", startHere:"Esperando su primer comentario",
+    emptyForum:"Aún no hay debates aquí. Abre un tema o comenta un artículo para empezar.",
+    backForum:"← Volver al foro", readArticle:"Leer el artículo completo →",
+    writeReply:"Tu respuesta", postReply:"Publicar respuesta", posting:"Publicando…",
+    title:"Título", category:"Categoría", message:"Mensaje", create:"Publicar tema",
+    titlePh:"Ej.: ¿Merece la pena una raqueta 16x19 para un jugador de nivel medio?",
+    bodyPh:"Explica tu idea, comparte datos o cita un estudio.",
+    replyPh:"Aporta tu experiencia, datos o una fuente.",
+    del:"Eliminar", sure:"¿Seguro? Eliminar", you:"tú", noReplies:"Nadie ha respondido todavía. Sé el primero.",
+    connecting:"Conectando con el foro…",
+    offline:"El foro funciona dentro de claude.ai con la sesión iniciada. Puedes leer la revista; para ver y escribir en el foro, abre esta página con tu cuenta.",
+    readOnly:"Puedes leer el foro, pero tu acceso no permite publicar. Pide acceso de colaborador a quien compartió la página.",
+    errWrite:"No se pudo publicar. Revisa tu conexión o tus permisos e inténtalo de nuevo.",
+    errEmpty:"Escribe algo antes de publicar.", errTitle:"El tema necesita un título.",
+    someone:"Lector", editorial:"Redacción de ShotDepth Journal", by:"Por la redacción", photo:"Foto",
+    about:"Publicación bilingüe de ciencia y tecnología aplicadas al tenis: materiales, biomecánica, entrenamiento, nutrición, recuperación y mente.",
+    footSec:"Secciones", footComm:"Comunidad", footL:"© 2026 ShotDepth Journal", footR:"Fotografía: Unsplash. Cada cifra cita su fuente.",
+    stories:"artículos", allSections:"Portada"
+  },
+  en:{
+    home:"Journal", forum:"Forum", tagline:"The science behind every shot", issue:"ShotDepth Journal · Issue 01 · October 2026",
+    cover:"Cover story", read:"Read the story", minutes:"min read",
+    latest:"Latest", allStories:"All stories",
+    labK:"Interactive lab", labT:"Move the spin and watch the net margin change",
+    labP:"Three balls at the same speed, all landing 2.3 m inside the baseline. The more topspin, the higher you can clear the net without the ball going long.",
+    labNote:"Physics model with drag and Magnus lift. Vertical scale ×3.",
+    spin:"Topspin", speed:"Speed", angle:"Launch angle", clearance:"Over the net", flight:"Flight time",
+    figsT:"By the numbers", keyFigure:"The figure", sources:"Sources", debateQ:"Question for debate",
+    enterDebate:"Join the debate", replies:"replies", reply:"reply", more:"Keep reading",
+    fbandK:"Community", fbandT:"The forum", fbandP:"Every story has its own debate. And you can start yours on anything tennis.",
+    openTopic:"Start a topic", goForum:"Open the forum", noActivity:"No conversations yet. Start the first one.",
+    forumIntro:"Debates on every story plus open topics on anything tennis.",
+    newTopic:"New topic", tabAll:"All", tabArticles:"Story debates", tabFree:"Open topics",
+    articleTag:"Story debate", startHere:"Waiting for a first comment",
+    emptyForum:"No debates here yet. Start a topic or comment on a story to get going.",
+    backForum:"← Back to the forum", readArticle:"Read the full story →",
+    writeReply:"Your reply", postReply:"Post reply", posting:"Posting…",
+    title:"Title", category:"Category", message:"Message", create:"Post topic",
+    titlePh:"E.g. Is a 16x19 racquet worth it for an intermediate player?",
+    bodyPh:"Explain your idea, share data or cite a study.",
+    replyPh:"Add your experience, data or a source.",
+    del:"Delete", sure:"Sure? Delete", you:"you", noReplies:"No one has replied yet. Be the first.",
+    connecting:"Connecting to the forum…",
+    offline:"The forum runs inside claude.ai when you're signed in. You can read the magazine; to see and post in the forum, open this page with your account.",
+    readOnly:"You can read the forum, but your access doesn't allow posting. Ask whoever shared the page for contributor access.",
+    errWrite:"Couldn't post. Check your connection or permissions and try again.",
+    errEmpty:"Write something before posting.", errTitle:"The topic needs a title.",
+    someone:"Reader", editorial:"ShotDepth Journal editors", by:"By the editors", photo:"Photo",
+    about:"A bilingual journal on the science and technology of tennis: gear, biomechanics, training, nutrition, recovery and the mind.",
+    footSec:"Sections", footComm:"Community", footL:"© 2026 ShotDepth Journal", footR:"Photography: Unsplash. Every figure cites its source.",
+    stories:"stories", allSections:"Front page"
+  }
+};
+
+/* ---------- state ---------- */
+let lang = "es";
+try { const s = localStorage.getItem("sd-lang"); if (s === "es" || s === "en") lang = s; else if (!(navigator.language||"es").toLowerCase().startsWith("es")) lang = "en"; } catch(e){}
+const t = k => (T[lang][k] ?? T.es[k] ?? k);
+const L = o => (o && (o[lang] || o.es)) || "";
+const S = { db:null, user:null, me:null, status:"connecting", threads:[], replies:[], canWrite:null, forumTab:"all", names:{} };
+const bySlug = Object.fromEntries(ARTICLES.map(a => [a.slug, a]));
+
+/* ---------- helpers ---------- */
+function esc(s){ return String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+const $ = s => document.querySelector(s);
+const secName = id => L(SECTIONS.find(s => s.id === id)) || id;
+const catName = id => L(CATS.find(c => c.id === id)) || L(CATS[CATS.length-1]);
+function fmtDate(d){ try { return new Date(d+"T12:00:00").toLocaleDateString(lang==="es"?"es-ES":"en-GB",{day:"numeric",month:"long",year:"numeric"}); } catch(e){ return d; } }
+function ago(ms){
+  if (!ms) return "";
+  const rtf = new Intl.RelativeTimeFormat(lang, {numeric:"auto"});
+  const s = (ms - Date.now())/1000, a = Math.abs(s);
+  if (a < 60) return rtf.format(Math.round(s), "second");
+  if (a < 3600) return rtf.format(Math.round(s/60), "minute");
+  if (a < 86400) return rtf.format(Math.round(s/3600), "hour");
+  if (a < 2592000) return rtf.format(Math.round(s/86400), "day");
+  return new Date(ms).toLocaleDateString(lang==="es"?"es-ES":"en-GB");
+}
+function hue(str){ let h=0; for (const c of String(str)) h = (h*31 + c.charCodeAt(0)) % 360; return h; }
+function newId(){ return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2,8); }
+function rows(snap){
+  if (!snap) return [];
+  const list = Array.isArray(snap) ? snap : (snap.docs || snap.items || snap.documents || []);
+  return Array.from(list).map(d => {
+    let data = typeof d.data === "function" ? d.data() : (d.data !== undefined ? d.data : d);
+    data = data || {};
+    return Object.assign({}, data, { id: d.id || (d.ref && d.ref.id) || data.id });
+  }).filter(r => r.id);
+}
+const repliesFor = tid => S.replies.filter(r => r.threadId === tid).sort((a,b) => (a.createdAt||0)-(b.createdAt||0));
+const nReplies = slug => repliesFor("art-"+slug).length;
+const repLabel = n => `${n} ${n===1?t("reply"):t("replies")}`;
+function lastSnippet(tid){ const r = repliesFor(tid); return r.length ? r[r.length-1].body : ""; }
+function lastAt(tid){ const r = repliesFor(tid); return r.length ? r[r.length-1].createdAt : 0; }
+
+function allThreads(){
+  const counts = {};
+  for (const r of S.replies) counts[r.threadId] = (counts[r.threadId]||0) + 1;
+  const list = [];
+  for (const a of ARTICLES) {
+    const id = "art-" + a.slug;
+    if (counts[id]) list.push({ kind:"article", id, slug:a.slug, title:L(a).title, n:counts[id], last:lastAt(id), snippet:lastSnippet(id) });
+  }
+  for (const th of S.threads) list.push({ kind:"free", id:th.id, title:th.title, cat:th.category, n:counts[th.id]||0, last:Math.max(th.createdAt||0, lastAt(th.id)), snippet:lastSnippet(th.id) || th.body });
+  return list.sort((a,b) => b.last - a.last);
+}
+const forumCount = () => allThreads().length;
+const threadHref = th => th.kind === "article" ? "#d-" + th.slug : "#t-" + th.id;
+
+/* ---------- db ---------- */
+async function connect(){
+  const timeout = new Promise(r => setTimeout(() => r([null,null]), 12000));
+  let db = null, user = null;
+  try {
+    if (window.claude && typeof window.claude.use === "function")
+      [db, user] = await Promise.race([Promise.all([window.claude.use("db"), window.claude.use("user")]), timeout]);
+  } catch(e){ db = null; }
+  if (!db) { S.status = "offline"; render(true); return; }
+  S.db = db; S.user = user;
+  try { S.me = user && typeof user.id === "function" ? await user.id() : null; } catch(e){ S.me = null; }
+  try { if (user && typeof user.can === "function") S.canWrite = await user.can("data.write"); } catch(e){}
+  S.status = "live";
+  subscribe("threads", list => { S.threads = list; render(true); });
+  subscribe("replies", list => { S.replies = list; render(true); });
+  render(true);
+}
+function subscribe(path, cb){
+  const col = S.db.collection(path);
+  if (typeof col.onSnapshot === "function") { try { col.onSnapshot(snap => cb(rows(snap)), () => {}); return; } catch(e){} }
+  const poll = async () => { try { cb(rows(await col.get())); } catch(e){} };
+  poll(); setInterval(poll, 15000);
+}
+async function resolveNames(){
+  const ids = [...new Set([...document.querySelectorAll("[data-uid]")].map(e => e.dataset.uid))].filter(id => id && id !== "editorial");
+  const missing = ids.filter(id => !(id in S.names));
+  if (missing.length && S.user && typeof S.user.profiles === "function") {
+    try {
+      const ps = await S.user.profiles(missing);
+      for (const id of missing) { const p = ps && (typeof ps.get === "function" ? ps.get(id) : ps[id]); S.names[id] = (p && p.name) || ""; }
+    } catch(e){}
+  }
+  document.querySelectorAll("[data-uid]").forEach(el => {
+    const id = el.dataset.uid;
+    let n = id === "editorial" ? t("editorial") : (S.names[id] || t("someone"));
+    if (id && id === S.me) n += " (" + t("you") + ")";
+    el.textContent = el.classList.contains("av") ? (n.trim()[0] || "?").toUpperCase() : n;
+  });
+}
+
+/* ---------- trajectory lab ---------- */
+const NET_X = 11.885, NET_H = 0.914, BASE = 23.77, TARGET = 21.5;
+function sim(v0, deg, rpm){
+  const m=0.057, r=0.0335, A=Math.PI*r*r, rho=1.21, Cd=0.55, g=9.81, dt=0.002;
+  let x=0, y=1.0, a=deg*Math.PI/180, vx=v0*Math.cos(a), vy=v0*Math.sin(a), tt=0, netY=null;
+  const w = rpm*2*Math.PI/60, pts=[[0,1]];
+  for (let i=0;i<6000;i++){
+    const v=Math.hypot(vx,vy), k=0.5*rho*A*v*v/m, CL = w>0 ? 1/(2+v/(r*w)) : 0;
+    const ax = -k*Cd*vx/v + k*CL*(vy/v), ay = -k*Cd*vy/v - g + k*CL*(-vx/v);
+    const px=x, py=y; vx+=ax*dt; vy+=ay*dt; x+=vx*dt; y+=vy*dt; tt+=dt;
+    if (px<NET_X && x>=NET_X) netY = py+(y-py)*(NET_X-px)/(x-px);
+    if (i%8===0) pts.push([x,y]);
+    if (y<=0){ pts.push([x,0]); break; }
+  }
+  return {x, netY, t:tt, pts};
+}
+function solve(v0, rpm){
+  let lo=-10, hi=30;
+  for (let i=0;i<40;i++){ const mid=(lo+hi)/2; if (sim(v0,mid,rpm).x < TARGET) lo=mid; else hi=mid; }
+  return {angle:lo, ...sim(v0,lo,rpm)};
+}
+const W=680, H=280, X0=16, X1=664, Y0=236;
+const sx = x => X0 + (x+0.3)/(BASE+0.6)*(X1-X0);
+const sy = y => Y0 - y*66;
+const path = pts => pts.map((p,i)=>(i?"L":"M")+sx(p[0]).toFixed(1)+" "+sy(Math.max(0,p[1])).toFixed(1)).join(" ");
+const ghosts = {};
+function labSVG(){
+  const g0 = ghosts[0] || (ghosts[0]=solve(30,0)), g3 = ghosts[3000] || (ghosts[3000]=solve(30,3000));
+  const tick = m => `<line x1="${X0}" x2="${X1}" y1="${sy(m)}" y2="${sy(m)}" stroke="#E3E6EB" stroke-width="1"/><text x="${X0}" y="${sy(m)-5}" font-family="IBM Plex Mono, monospace" font-size="10" fill="#69717E">${m} m</text>`;
+  const lbl = (x,y,s,anchor="middle") => `<text x="${x}" y="${y}" text-anchor="${anchor}" font-family="Archivo, sans-serif" font-size="10.5" font-weight="600" fill="#69717E">${s}</text>`;
+  return `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(t("labT"))}">
+    <rect x="${sx(0)}" y="${Y0}" width="${sx(BASE)-sx(0)}" height="6" fill="#1F45B5" opacity=".12"/>
+    ${[1,2,3].map(tick).join("")}
+    <line x1="${X0}" x2="${X1}" y1="${Y0}" y2="${Y0}" stroke="#101317" stroke-width="1.5"/>
+    <line x1="${sx(0)}" x2="${sx(0)}" y1="${Y0-5}" y2="${Y0+6}" stroke="#101317" stroke-width="2"/>
+    <line x1="${sx(BASE)}" x2="${sx(BASE)}" y1="${Y0-5}" y2="${Y0+6}" stroke="#101317" stroke-width="2"/>
+    <line x1="${sx(NET_X+6.4)}" x2="${sx(NET_X+6.4)}" y1="${Y0-3}" y2="${Y0+6}" stroke="#69717E" stroke-width="1.2"/>
+    <rect x="${sx(NET_X)-1.5}" y="${sy(NET_H)}" width="3" height="${Y0-sy(NET_H)}" fill="#101317"/>
+    <line x1="${sx(NET_X)-10}" x2="${sx(NET_X)+10}" y1="${sy(NET_H)}" y2="${sy(NET_H)}" stroke="#101317" stroke-width="2"/>
+    <path d="${path(g0.pts)}" fill="none" stroke="#9AA1AC" stroke-width="1.4" stroke-dasharray="5 5"/>
+    <path d="${path(g3.pts)}" fill="none" stroke="#9AA1AC" stroke-width="1.6" stroke-dasharray="1 5" stroke-linecap="round"/>
+    ${lbl(sx(NET_X)+16, sy(g0.netY)+14, "0 rpm","start")}
+    ${lbl(sx(NET_X)+16, sy(g3.netY)-8, "3000 rpm","start")}
+    <path id="live" d="" fill="none" stroke="#1F45B5" stroke-width="3.2" stroke-linecap="round"/>
+    <circle id="liveball" r="7" fill="#D7EA3C" stroke="#101317" stroke-width="1.2" cx="${sx(TARGET)}" cy="${Y0-7}"/>
+    ${lbl(sx(0), Y0+22, "0 m")}
+    ${lbl(sx(NET_X), Y0+22, (lang==="es"?"Red · ":"Net · ")+"11,89 m".replace(",", lang==="es"?",":"."))}
+    ${lbl(sx(BASE), Y0+22, "23,77 m".replace(",", lang==="es"?",":"."), "end")}
+  </svg>`;
+}
+function updateLab(){
+  const rpmEl = $("#rpm"), vEl = $("#vel"); if (!rpmEl) return;
+  const rpm = +rpmEl.value, v = +vEl.value, s = solve(v, rpm);
+  const dec = n => lang==="es" ? String(n).replace(".", ",") : String(n);
+  $("#live").setAttribute("d", path(s.pts));
+  $("#rpmv").textContent = rpm + " rpm";
+  $("#velv").textContent = Math.round(v*3.6) + " km/h";
+  $("#ro-angle").textContent = dec(s.angle.toFixed(1)) + "°";
+  $("#ro-clear").textContent = s.netY == null ? "—" : Math.round((s.netY-NET_H)*100) + " cm";
+  $("#ro-time").textContent = dec(s.t.toFixed(2)) + " s";
+}
+
+/* ---------- components ---------- */
+function story(a, variant=""){
+  const c = L(a), n = nReplies(a.slug);
+  return `<a class="story ${variant}" href="#a-${a.slug}">
+    ${photo(a.slug, c.title)}
+    <span class="kicker">${esc(secName(a.section))}</span>
+    <h3>${esc(c.title)}</h3>
+    ${variant !== "small" ? `<p>${esc(c.dek)}</p>` : ""}
+    <span class="meta"><span>${a.minutes} ${t("minutes")}</span>${S.status==="live" && n ? `<span>${repLabel(n)}</span>` : ""}</span>
+  </a>`;
+}
+function statusBox(){
+  if (S.status === "connecting") return `<p class="status">${t("connecting")}</p>`;
+  if (S.status === "offline") return `<p class="status">${t("offline")}</p>`;
+  if (S.canWrite === false) return `<p class="status">${t("readOnly")}</p>`;
+  return "";
+}
+function forumBandList(){
+  if (S.status === "connecting") return `<p class="empty-d">${t("connecting")}</p>`;
+  if (S.status === "offline") return `<p class="empty-d">${t("offline")}</p>`;
+  const list = allThreads().slice(0,4);
+  if (!list.length) return `<p class="empty-d">${t("noActivity")}</p>`;
+  return list.map(th => `<a class="row" href="${threadHref(th)}"><small>${th.kind==="article"?t("articleTag"):esc(catName(th.cat))} · ${repLabel(th.n)} · ${esc(ago(th.last))}</small><b>${esc(th.title)}</b></a>`).join("");
+}
+function forumBand(){
+  return `<section class="fband">
+    <a href="#foro" class="ph" style="display:block">
+      <img src="${img("foro")}" alt="" loading="lazy" style="object-position:${PHOTOS.foro.pos}">
+      <div class="over"><span class="kicker">${t("fbandK")}</span><h2>${t("fbandT")}</h2><p>${t("fbandP")}</p></div>
+    </a>
+    <div class="flist">
+      <div id="fband-list">${forumBandList()}</div>
+      <div class="actions" style="margin-top:24px"><a class="btn light" href="#nuevo">${t("openTopic")}</a><a class="btn ghost" style="color:#fff;border-color:rgba(255,255,255,.5)" href="#foro">${t("goForum")}</a></div>
+    </div>
+  </section>`;
+}
+
+/* ---------- views ---------- */
+function viewHome(){
+  const feat = ARTICLES.find(a => a.featured), rest = ARTICLES.filter(a => a !== feat);
+  const fc = L(feat);
+  const figs = ["pelota","saque","intermitente","rituales","nutricion"].map(s => bySlug[s]);
+  return `
+  <div class="wrap">
+    <div class="dateline"><span>${t("tagline")}</span><span>${t("issue")}</span></div>
+    <section class="cover">
+      <div class="txt">
+        <span class="kicker dot">${t("cover")} · ${esc(secName(feat.section))}</span>
+        <h1>${esc(fc.title)}</h1>
+        <p class="dek">${esc(fc.dek)}</p>
+        <div class="meta"><span>${t("by")}</span><span>${fmtDate(feat.date)}</span><span>${feat.minutes} ${t("minutes")}</span></div>
+        <div class="actions"><a class="btn" href="#a-${feat.slug}">${t("read")}</a><a class="btn ghost" href="#d-${feat.slug}">${t("enterDebate")}${S.status==="live"&&nReplies(feat.slug)?` · ${nReplies(feat.slug)}`:""}</a></div>
+      </div>
+      <a href="#a-${feat.slug}">${photo(feat.slug, fc.title)}<div class="credit">${t("photo")}: ${PHOTOS[feat.slug].by} / Unsplash</div></a>
+    </section>
+  </div>
+
+  <section class="band">
+    <div class="wrap lab">
+      <div>
+        <span class="kicker">${t("labK")}</span>
+        <h2>${t("labT")}</h2>
+        <p>${t("labP")}</p>
+        <div class="readout">
+          <div><b id="ro-clear"></b><span>${t("clearance")}</span></div>
+          <div><b id="ro-angle"></b><span>${t("angle")}</span></div>
+          <div><b id="ro-time"></b><span>${t("flight")}</span></div>
+        </div>
+      </div>
+      <div class="labcard">
+        ${labSVG()}
+        <div class="controls">
+          <label for="rpm">${t("spin")} <span class="v" id="rpmv"></span><input id="rpm" type="range" min="0" max="3500" step="100" value="1500"></label>
+          <label for="vel">${t("speed")} <span class="v" id="velv"></span><input id="vel" type="range" min="22" max="40" step="0.5" value="30"></label>
+        </div>
+        <p class="note" style="margin:14px 0 0">${t("labNote")}</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <section class="latest" style="padding-top:72px">
+      <div class="shead"><h2>${t("latest")}</h2><span class="meta"><span>${rest.length} ${t("stories")}</span></span></div>
+      <div class="lead-row">
+        ${story(rest[0], "lead")}
+        <div class="stack">${story(rest[1], "small")}${story(rest[2], "small")}</div>
+      </div>
+      <div class="grid3">${rest.slice(3).map(a => story(a)).join("")}</div>
+    </section>
+
+    <section class="figs" style="padding-top:0">
+      <div class="shead"><h2>${t("figsT")}</h2></div>
+      <div class="figrow">${figs.map(a => `<a href="#a-${a.slug}"><b>${esc(a.figure)}</b><span>${esc(L(a.figureLabel))}</span></a>`).join("")}</div>
+    </section>
+
+    ${forumBand()}
+  </div>`;
+}
+function viewSection(sec){
+  const list = ARTICLES.filter(a => a.section === sec);
+  return `<div class="wrap">
+    <header class="sechead"><span class="kicker dot">ShotDepth</span><h1>${esc(secName(sec))}</h1></header>
+    <div class="grid3" style="padding-bottom:72px">${list.map(a => story(a)).join("")}</div>
+    ${forumBand()}
+  </div>`;
+}
+function viewArticle(a){
+  const c = L(a), n = nReplies(a.slug);
+  const body = c.body.map(p => p.startsWith("## ") ? `<h3>${esc(p.slice(3))}</h3>` : `<p>${p.replace(/<(?!\/?sub>)/g,"&lt;")}</p>`).join("");
+  const more = ARTICLES.filter(x => x !== a && x.section === a.section).concat(ARTICLES.filter(x => x !== a && x.section !== a.section)).slice(0,3);
+  return `<article>
+    <div class="wrap">
+      <header class="ahead">
+        <a class="kicker dot" href="#s-${a.section}">${esc(secName(a.section))}</a>
+        <h1>${esc(c.title)}</h1>
+        <p class="dek">${esc(c.dek)}</p>
+        <div class="meta"><span>${t("by")}</span><span>${fmtDate(a.date)}</span><span>${a.minutes} ${t("minutes")}</span></div>
+      </header>
+      <figure class="ahero" style="margin:0">${photo(a.slug, c.title)}<figcaption class="credit">${t("photo")}: ${PHOTOS[a.slug].by} / Unsplash</figcaption></figure>
+      <div class="abody">
+        <div class="prose">${body}</div>
+        <aside class="aside"><span class="kicker">${t("keyFigure")}</span><b>${esc(a.figure)}</b><span>${esc(L(a.figureLabel))}</span></aside>
+        <section class="debate" aria-labelledby="dq">
+          <span class="kicker dot" id="dq">${t("debateQ")}</span>
+          <q>${esc(c.question)}</q>
+          <a class="btn blue" href="#d-${a.slug}">${t("enterDebate")}${S.status==="live" ? ` · ${repLabel(n)}` : ""} →</a>
+        </section>
+        <section class="sources"><span class="kicker">${t("sources")}</span><ol>${a.sources.map(s=>`<li>${esc(s)}</li>`).join("")}</ol></section>
+      </div>
+      <section class="more">
+        <div class="shead"><h2>${t("more")}</h2><a href="#inicio">${t("allStories")} →</a></div>
+        <div class="grid3">${more.map(x => story(x)).join("")}</div>
+      </section>
+    </div>
+  </article>`;
+}
+function forumHero(){
+  return `<section class="fhero">
+    <img src="${img("foro")}" alt="" style="object-position:${PHOTOS.foro.pos}">
+    <div class="wrap">
+      <div><span class="kicker">${t("fbandK")}</span><h1>${t("forum")}</h1><p>${t("forumIntro")}</p></div>
+      <a class="btn light" href="#nuevo">+ ${t("newTopic")}</a>
+    </div>
+  </section>`;
+}
+function viewForum(){
+  const tab = S.forumTab;
+  let list = S.status === "live" ? allThreads() : [];
+  if (tab === "articles") list = list.filter(x => x.kind === "article");
+  if (tab === "free") list = list.filter(x => x.kind === "free");
+  const waiting = ARTICLES.filter(a => !nReplies(a.slug));
+  const rowsHtml = list.length ? list.map(th => `<a class="thread" href="${threadHref(th)}">
+      <span class="thumb">${th.kind==="article" ? `<img src="${img(th.slug)}" alt="" loading="lazy" style="object-position:${PHOTOS[th.slug].pos}">` : esc((catName(th.cat)[0]||"?").toUpperCase())}</span>
+      <div style="min-width:0">
+        <span class="tag">${th.kind==="article"?t("articleTag"):esc(catName(th.cat))}</span>
+        <h3>${esc(th.title)}</h3>
+        <p class="snip">${esc(th.snippet || "")}</p>
+      </div>
+      <div class="count"><b>${th.n}</b><span>${th.n===1?t("reply"):t("replies")}</span><span class="note" style="display:block;margin-top:4px;text-transform:none;letter-spacing:0">${esc(ago(th.last))}</span></div>
+    </a>`).join("")
+    : (S.status === "live" ? `<div class="empty"><span>${t("emptyForum")}</span><a class="btn blue" href="#nuevo">${t("newTopic")}</a></div>` : "");
+  return `${forumHero()}
+  <div class="wrap forum">
+    <div>
+      ${statusBox()}
+      <div class="tabs" role="group">
+        <button type="button" id="tab-all" data-tab="all" aria-pressed="${tab==="all"}">${t("tabAll")}</button>
+        <button type="button" id="tab-articles" data-tab="articles" aria-pressed="${tab==="articles"}">${t("tabArticles")}</button>
+        <button type="button" id="tab-free" data-tab="free" aria-pressed="${tab==="free"}">${t("tabFree")}</button>
+      </div>
+      <div>${rowsHtml}</div>
+    </div>
+    <aside class="fside">
+      <div><h3>${t("startHere")}</h3>
+      ${waiting.map(a => `<a class="wait" href="#d-${a.slug}"><span class="thumb"><img src="${img(a.slug)}" alt="" loading="lazy" style="object-position:${PHOTOS[a.slug].pos}"></span><b>${esc(L(a).title)}</b></a>`).join("")}</div>
+    </aside>
+  </div>`;
+}
+function postHtml(r){
+  const mine = r.authorId && r.authorId === S.me;
+  return `<div class="post">
+    <span class="av" data-uid="${esc(r.authorId)}" style="background:hsl(${hue(r.authorId)} 60% 86%)"></span>
+    <div style="min-width:0">
+      <div class="meta" style="align-items:center"><span class="who" data-uid="${esc(r.authorId)}"></span><span>${esc(ago(r.createdAt))}</span>
+      ${mine ? `<button type="button" class="linkbtn" data-del="${esc(r.id)}" data-col="replies">${t("del")}</button>` : ""}</div>
+      <p class="body">${esc(r.body)}</p>
+    </div></div>`;
+}
+function composeReply(tid){
+  if (S.status !== "live" || S.canWrite === false) return statusBox();
+  return `<form class="compose" id="replyform" data-tid="${esc(tid)}">
+    <label for="replybody">${t("writeReply")}</label>
+    <textarea id="replybody" maxlength="4000" placeholder="${esc(t("replyPh"))}"></textarea>
+    <div class="row"><button class="btn blue" type="submit" id="replysubmit">${t("postReply")}</button><span class="note" id="replynote" role="status"></span></div>
+  </form>`;
+}
+function viewArticleThread(a){
+  const tid = "art-"+a.slug, list = repliesFor(tid), c = L(a);
+  return `<div class="wrap"><section class="tview">
+    <a class="back" href="#foro">${t("backForum")}</a>
+    <div style="margin-top:22px"><span class="tag">${t("articleTag")} · ${esc(secName(a.section))}</span></div>
+    <h1>${esc(c.title)}</h1>
+    <div class="op">
+      <a href="#a-${a.slug}">${photo(a.slug, c.title)}</a>
+      <div style="display:grid;gap:10px;min-width:0">
+        <span class="kicker">${t("debateQ")}</span>
+        <q>${esc(c.question)}</q>
+        <a class="back" href="#a-${a.slug}">${t("readArticle")}</a>
+      </div>
+    </div>
+    <div class="posts">${S.status==="live" ? (list.length ? list.map(postHtml).join("") : `<p class="note" style="padding-block:20px">${t("noReplies")}</p>`) : ""}</div>
+    ${composeReply(tid)}
+  </section></div>`;
+}
+function viewThread(id){
+  const th = S.threads.find(x => x.id === id);
+  if (!th) return `<div class="wrap"><section class="tview"><a class="back" href="#foro">${t("backForum")}</a>${statusBox() || `<p class="note" style="margin-top:20px">${t("connecting")}</p>`}</section></div>`;
+  const list = repliesFor(id), mine = th.authorId && th.authorId === S.me;
+  return `<div class="wrap"><section class="tview">
+    <a class="back" href="#foro">${t("backForum")}</a>
+    <div style="margin-top:22px"><span class="tag">${esc(catName(th.category))}</span></div>
+    <h1>${esc(th.title)}</h1>
+    <div class="op plain">
+      <div class="meta" style="align-items:center"><span class="who" data-uid="${esc(th.authorId)}"></span><span>${esc(ago(th.createdAt))}</span>
+      ${mine && !list.length ? `<button type="button" class="linkbtn" data-del="${esc(th.id)}" data-col="threads">${t("del")}</button>` : ""}</div>
+      <p class="body" style="margin:0">${esc(th.body)}</p>
+    </div>
+    <div class="posts">${list.length ? list.map(postHtml).join("") : `<p class="note" style="padding-block:20px">${t("noReplies")}</p>`}</div>
+    ${composeReply(id)}
+  </section></div>`;
+}
+function viewNew(){
+  const body = (S.status !== "live" || S.canWrite === false) ? statusBox() : `
+    <form class="compose" id="topicform">
+      <label for="ttitle">${t("title")}</label>
+      <input id="ttitle" maxlength="140" placeholder="${esc(t("titlePh"))}">
+      <label for="tcat">${t("category")}</label>
+      <select id="tcat">${CATS.map(c => `<option value="${c.id}">${esc(L(c))}</option>`).join("")}</select>
+      <label for="tbody">${t("message")}</label>
+      <textarea id="tbody" maxlength="4000" placeholder="${esc(t("bodyPh"))}"></textarea>
+      <div class="row"><button class="btn blue" type="submit" id="topicsubmit">${t("create")}</button><span class="note" id="topicnote" role="status"></span></div>
+    </form>`;
+  return `<div class="wrap"><section class="tview"><a class="back" href="#foro">${t("backForum")}</a><h1>${t("newTopic")}</h1>${body}</section></div>`;
+}
+
+/* ---------- router & render ---------- */
+function route(){
+  const h = (location.hash || "#inicio").slice(1);
+  if (h === "foro") return {v:"forum"};
+  if (h === "nuevo") return {v:"new"};
+  if (h.startsWith("a-") && bySlug[h.slice(2)]) return {v:"article", a:bySlug[h.slice(2)]};
+  if (h.startsWith("d-") && bySlug[h.slice(2)]) return {v:"adebate", a:bySlug[h.slice(2)]};
+  if (h.startsWith("t-")) return {v:"thread", id:h.slice(2)};
+  if (h.startsWith("s-") && SECTIONS.some(s => s.id === h.slice(2))) return {v:"section", s:h.slice(2)};
+  return {v:"home"};
+}
+function chrome(r){
+  const forumish = ["forum","new","adebate","thread"].includes(r.v);
+  document.documentElement.lang = lang;
+  $("#nav-home").textContent = t("home");
+  $("#nav-forum").innerHTML = esc(t("forum")) + (S.status==="live" && forumCount() ? `<span class="badge">${forumCount()}</span>` : "");
+  if (forumish) { $("#nav-forum").setAttribute("aria-current","page"); $("#nav-home").removeAttribute("aria-current"); }
+  else { $("#nav-home").setAttribute("aria-current","page"); $("#nav-forum").removeAttribute("aria-current"); }
+  ["es","en"].forEach(l => $("#lang-"+l).setAttribute("aria-pressed", String(l===lang)));
+  const cur = r.s || (r.a && r.v==="article" ? r.a.section : "");
+  $("#sections").innerHTML = `<a href="#inicio" ${r.v==="home"?'aria-current="page"':""}>${t("allSections")}</a>` +
+    SECTIONS.map(s => `<a href="#s-${s.id}" ${cur===s.id?'aria-current="page"':""}>${esc(L(s))}</a>`).join("");
+  $("#foot-about").textContent = t("about");
+  $("#foot-sec").textContent = t("footSec"); $("#foot-comm").textContent = t("footComm");
+  $("#foot-sections").innerHTML = SECTIONS.map(s => `<li><a href="#s-${s.id}">${esc(L(s))}</a></li>`).join("");
+  $("#foot-links").innerHTML = `<li><a href="#foro">${t("forum")}</a></li><li><a href="#nuevo">${t("newTopic")}</a></li><li><a href="#d-magnus">${t("enterDebate")}</a></li>`;
+  $("#foot-l").textContent = t("footL"); $("#foot-r").textContent = t("footR");
+  document.title = r.a ? L(r.a).title + " · ShotDepth Journal" : (forumish ? t("forum") + " · ShotDepth Journal" : "ShotDepth Journal");
+}
+let lastKey = "";
+function render(fromData){
+  const r = route();
+  const key = r.v + (r.a ? r.a.slug : "") + (r.id||"") + (r.s||"") + lang;
+  chrome(r);
+  // live data on reading pages: patch small regions instead of redrawing the page
+  if (fromData && key === lastKey && (r.v === "home" || r.v === "section" || r.v === "article")) {
+    const fl = $("#fband-list"); if (fl) fl.innerHTML = forumBandList();
+    resolveNames(); return;
+  }
+  const draft = {};
+  ["replybody","ttitle","tbody","tcat"].forEach(id => { const el = document.getElementById(id); if (el) draft[id] = el.value; });
+  const ae = document.activeElement, focusId = fromData && ae && ae.id && draft[ae.id] !== undefined ? ae.id : null;
+  const selS = focusId ? ae.selectionStart : 0, selE = focusId ? ae.selectionEnd : 0, keepY = window.scrollY;
+  let html;
+  if (r.v === "forum") html = viewForum();
+  else if (r.v === "new") html = viewNew();
+  else if (r.v === "article") html = viewArticle(r.a);
+  else if (r.v === "adebate") html = viewArticleThread(r.a);
+  else if (r.v === "thread") html = viewThread(r.id);
+  else if (r.v === "section") html = viewSection(r.s);
+  else html = viewHome();
+  $("#app").innerHTML = html;
+  if (fromData && key === lastKey) for (const id in draft) { const el = document.getElementById(id); if (el) el.value = draft[id]; }
+  if (focusId) { const el = document.getElementById(focusId); if (el) { el.focus({preventScroll:true}); try { el.setSelectionRange(selS, selE); } catch(_){} } }
+  if (fromData && key === lastKey) window.scrollTo(0, keepY); else if (!fromData) window.scrollTo(0, 0);
+  lastKey = key;
+  if ($("#rpm")) updateLab();
+  resolveNames();
+}
+
+/* ---------- events ---------- */
+window.addEventListener("hashchange", () => render());
+document.addEventListener("input", e => { if (e.target.id === "rpm" || e.target.id === "vel") updateLab(); });
+document.addEventListener("click", async e => {
+  const lb = e.target.closest("[data-lang]");
+  if (lb) { lang = lb.dataset.lang; try { localStorage.setItem("sd-lang", lang); } catch(_){} const y = window.scrollY; render(true); window.scrollTo(0, y); return; }
+  const tb = e.target.closest("[data-tab]");
+  if (tb) { S.forumTab = tb.dataset.tab; lastKey = ""; const y = window.scrollY; render(true); window.scrollTo(0, y); return; }
+  const db = e.target.closest("[data-del]");
+  if (db) {
+    if (db.dataset.armed !== "1") { db.dataset.armed = "1"; db.textContent = t("sure"); db.classList.add("warn"); return; }
+    try { await S.db.doc(db.dataset.col + "/" + db.dataset.del).delete(); if (db.dataset.col === "threads") location.hash = "#foro"; }
+    catch(_){ db.textContent = t("errWrite"); }
+  }
+});
+document.addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!S.db) return;
+  if (e.target.id === "replyform") {
+    const tid = e.target.dataset.tid, ta = $("#replybody"), note = $("#replynote"), btn = $("#replysubmit");
+    const body = ta.value.trim();
+    if (!body) { note.textContent = t("errEmpty"); note.className = "note err"; return; }
+    btn.disabled = true; note.className = "note"; note.textContent = t("posting");
+    try {
+      await S.db.doc("replies/" + newId()).set({ threadId: tid, body: body.slice(0,4000), authorId: S.me || "", createdAt: Date.now() });
+      const ta2 = $("#replybody"); if (ta2) ta2.value = ""; const n2 = $("#replynote"); if (n2) n2.textContent = "";
+    } catch(_) { const n2 = $("#replynote"); if (n2) { n2.textContent = t("errWrite"); n2.className = "note err"; } }
+    const b2 = $("#replysubmit"); if (b2) b2.disabled = false;
+  }
+  if (e.target.id === "topicform") {
+    const title = $("#ttitle").value.trim(), body = $("#tbody").value.trim(), cat = $("#tcat").value;
+    const note = $("#topicnote"), btn = $("#topicsubmit");
+    if (!title) { note.textContent = t("errTitle"); note.className = "note err"; return; }
+    if (!body) { note.textContent = t("errEmpty"); note.className = "note err"; return; }
+    btn.disabled = true; note.className = "note"; note.textContent = t("posting");
+    const id = newId();
+    try {
+      await S.db.doc("threads/" + id).set({ title: title.slice(0,140), body: body.slice(0,4000), category: cat, authorId: S.me || "", createdAt: Date.now() });
+      location.hash = "#t-" + id;
+    } catch(_) { note.textContent = t("errWrite"); note.className = "note err"; btn.disabled = false; }
+  }
+});
+
+render();
+connect();
+})();
+
+</script>
+
+</body></html>
